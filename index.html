@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow, noimageindex, noarchive" />
+  <meta name="description" content="PMTI is an unofficial, fan-made, non-commercial monster personality test for entertainment only." />
+  <title>PMTI | 非官方同人性格测试</title>
+  <style>
+    :root {
+      --bg: #f6f0e4;
+      --panel: #fffdf8;
+      --text: #20262c;
+      --muted: #6b7280;
+      --line: #eadfc9;
+      --soft: #fff5df;
+      --accent: #c63d2f;
+      --accent-strong: #1f4f8a;
+      --gold: #f0b94b;
+      --shadow: 0 18px 44px rgba(75, 54, 22, 0.12);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      color: var(--text);
+      font-family: "Avenir Next", "Trebuchet MS", "PingFang SC", "Microsoft YaHei", sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(255, 223, 120, 0.45), rgba(255, 223, 120, 0) 28%),
+        radial-gradient(circle at top right, rgba(79, 142, 217, 0.20), rgba(79, 142, 217, 0) 26%),
+        linear-gradient(180deg, #fff8ee 0%, #f7f0e4 48%, #f5ebdc 100%);
+    }
+
+    .shell {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 24px 16px 56px;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
+    .hero {
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -54px;
+      top: -54px;
+      width: 190px;
+      height: 190px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(240, 185, 75, 0.26), rgba(240, 185, 75, 0.02) 68%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      font-size: 12px;
+      color: var(--accent-strong);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    h1, h2, h3, p { margin: 0; }
+    h1 {
+      margin-top: 16px;
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: 1.04;
+      letter-spacing: -0.04em;
+      max-width: 740px;
+    }
+
+    .sub {
+      margin-top: 14px;
+      max-width: 720px;
+      color: var(--muted);
+      line-height: 1.85;
+      font-size: 15px;
+    }
+
+    .hero-grid {
+      margin-top: 24px;
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 18px;
+    }
+
+    .mini-panel {
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg, #fffefb, #fff6e8);
+    }
+
+    .mini-panel h3 {
+      margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    .mini-panel p,
+    .mini-panel li {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 14px;
+    }
+
+    .mini-panel ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .hero-actions,
+    .actions-row,
+    .result-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .hero-actions { margin-top: 26px; }
+
+    button {
+      border: 0;
+      cursor: pointer;
+      border-radius: 14px;
+      transition: transform 0.16s ease, opacity 0.16s ease, box-shadow 0.16s ease;
+      font: inherit;
+      font-weight: 800;
+      padding: 14px 20px;
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+      transform: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #d94235, #b52e24);
+      color: #fff;
+      box-shadow: 0 12px 28px rgba(198, 61, 47, 0.24);
+    }
+
+    .btn-secondary {
+      background: #fff;
+      color: var(--accent-strong);
+      border: 1px solid var(--line);
+    }
+
+    .test-wrap,
+    .result-wrap {
+      margin-top: 22px;
+      padding: 22px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .progress {
+      flex: 1;
+      min-width: 240px;
+      height: 12px;
+      background: #f1e7d6;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress > span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, #f0b94b, #cc4537, #356eb1);
+      border-radius: inherit;
+      transition: width 0.2s ease;
+    }
+
+    .progress-text,
+    .hint {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .question-list {
+      display: grid;
+      gap: 16px;
+    }
+
+    .question-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .question-position {
+      font-size: 13px;
+      color: var(--accent-strong);
+      font-weight: 800;
+    }
+
+    .question {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #fffefc, #fff8ef);
+    }
+
+    .question-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 12px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--accent-strong);
+      font-weight: 700;
+    }
+
+    .question-title {
+      font-size: 16px;
+      line-height: 1.8;
+      white-space: pre-wrap;
+    }
+
+    .options {
+      display: grid;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #fff;
+      transition: border-color 0.16s ease, background 0.16s ease;
+    }
+
+    .option:hover {
+      border-color: #d9c29b;
+      background: #fff9ef;
+    }
+
+    .option input {
+      margin-top: 3px;
+      accent-color: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .option-code {
+      min-width: 22px;
+      color: var(--accent-strong);
+      font-weight: 800;
+    }
+
+    .actions-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 18px;
+      padding-top: 6px;
+    }
+
+    .result-layout {
+      display: grid;
+      gap: 18px;
+    }
+
+    .result-top {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .poster-box,
+    .type-box,
+    .analysis-box,
+    .dim-box,
+    .lore-box,
+    .easter-box,
+    .top3-box,
+    .note-box {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      background: linear-gradient(180deg, #fffefc, #fff8ef);
+    }
+
+    .poster-box {
+      min-height: 300px;
+      position: relative;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top right, var(--posterGlowA, rgba(53, 110, 177, 0.18)), rgba(53, 110, 177, 0) 40%),
+        radial-gradient(circle at bottom left, var(--posterGlowB, rgba(240, 185, 75, 0.22)), rgba(240, 185, 75, 0) 36%),
+        linear-gradient(180deg, var(--posterTop, #fffefc), var(--posterBottom, #fff8ef));
+    }
+
+    .poster-dex {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+      margin-bottom: 14px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .poster-mon {
+      position: relative;
+      z-index: 1;
+      font-size: clamp(38px, 8vw, 78px);
+      letter-spacing: -0.05em;
+      line-height: 0.95;
+      margin-bottom: 18px;
+    }
+
+    .poster-type {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.82);
+      color: var(--accent-strong);
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .poster-art {
+      position: absolute;
+      right: 14px;
+      top: 18px;
+      width: 180px;
+      height: 180px;
+      border-radius: 28px;
+      opacity: 0.92;
+      pointer-events: none;
+      z-index: 0;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 32% 28%, rgba(255,255,255,0.85), rgba(255,255,255,0) 34%),
+        linear-gradient(135deg, rgba(255,255,255,0.45), rgba(255,255,255,0.08));
+      border: 1px solid rgba(255,255,255,0.38);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.4);
+    }
+
+    .poster-art::before {
+      content: "";
+      position: absolute;
+      inset: 16px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 50% 50%, var(--artCore, rgba(255,255,255,0.6)), rgba(255,255,255,0) 62%),
+        repeating-conic-gradient(from 0deg, var(--artRing, rgba(255,255,255,0.18)) 0 12deg, transparent 12deg 24deg);
+      opacity: 0.9;
+    }
+
+    .art-glyph {
+      position: relative;
+      z-index: 1;
+      font-size: 72px;
+      font-weight: 900;
+      letter-spacing: -0.08em;
+      color: var(--artGlyph, rgba(31,79,138,0.88));
+      text-shadow: 0 8px 20px rgba(255,255,255,0.3);
+    }
+
+    .poster-caption {
+      color: #364152;
+      line-height: 1.85;
+      font-size: 15px;
+      position: relative;
+      z-index: 1;
+      white-space: pre-wrap;
+    }
+
+    .poster-stats {
+      display: grid;
+      gap: 10px;
+      margin-top: 18px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .stat-row {
+      display: grid;
+      grid-template-columns: 96px 1fr 48px;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .stat-row strong {
+      color: var(--text);
+      font-size: 12px;
+      letter-spacing: 0.04em;
+    }
+
+    .stat-bar {
+      height: 10px;
+      border-radius: 999px;
+      background: #f1e7d6;
+      overflow: hidden;
+    }
+
+    .stat-bar span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-strong));
+    }
+
+    .type-kicker {
+      font-size: 12px;
+      color: var(--accent-strong);
+      margin-bottom: 8px;
+      letter-spacing: 0.06em;
+      font-weight: 800;
+    }
+
+    .type-name {
+      font-size: clamp(30px, 5vw, 48px);
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+    }
+
+    .type-subname {
+      margin-top: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .match {
+      margin-top: 18px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: var(--soft);
+      border: 1px solid var(--line);
+      color: var(--accent-strong);
+      font-weight: 800;
+      font-size: 14px;
+    }
+
+    .analysis-box p,
+    .note-box p {
+      color: #364152;
+      line-height: 1.9;
+      font-size: 15px;
+      white-space: pre-wrap;
+    }
+
+    .lore-grid,
+    .easter-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .lore-card,
+    .easter-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .lore-card h4,
+    .easter-card h4 {
+      margin: 0 0 8px;
+      font-size: 14px;
+    }
+
+    .lore-card p,
+    .easter-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .dim-list,
+    .top3-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .dim-item,
+    .top3-item {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fff;
+    }
+
+    .dim-item-top,
+    .top3-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .dim-item-name,
+    .top3-item strong {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    .dim-item-score,
+    .top3-score {
+      color: var(--accent-strong);
+      font-weight: 800;
+      font-size: 14px;
+      white-space: nowrap;
+    }
+
+    .dim-item p,
+    .top3-item span {
+      margin: 8px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .share-btn {
+      margin-left: auto;
+    }
+
+    .share-status {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.7;
+      min-height: 20px;
+    }
+
+    .subtle-note {
+      margin-top: 18px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.8;
+    }
+
+    .footer-disclaimer {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--line);
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.9;
+    }
+
+    @media (max-width: 860px) {
+      .hero-grid,
+      .result-top,
+      .lore-grid,
+      .easter-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .shell { padding: 14px 12px 42px; }
+      .hero, .test-wrap, .result-wrap { padding: 16px; }
+      h1 { font-size: 34px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <section id="intro" class="screen active">
+      <div class="hero card">
+        <div class="eyebrow">PMTI / Unofficial Fan-made Test</div>
+        <h1>如果你不是训练家，而是一只宝可梦，你会是哪一型？</h1>
+        <p class="sub">
+          这是一个非官方、非商用的宝可梦主题同人测试。它保留了多维度评分思路，
+          但把题目和结果都重写成了更像宝可梦冒险的语境。结果只用于娱乐和角色创作，不是官方设定，也不是心理测评。
+        </p>
+
+        <div class="hero-grid">
+          <div class="mini-panel">
+            <h3>这版包含什么</h3>
+            <ul>
+              <li>16 个初版宝可梦人格</li>
+              <li>15 个维度，30 道题</li>
+              <li>结果页展示主人格、Top 3 相似类型和维度画像</li>
+            </ul>
+          </div>
+          <div class="mini-panel">
+            <h3>风格说明</h3>
+            <p>
+              这一版先不放官方图片，避免项目初期太依赖素材。重点先把题库、维度和人格设定跑顺，
+              后面我们再补插画、角色卡、分享图和更多宝可梦。
+            </p>
+          </div>
+        </div>
+
+        <div class="hero-actions">
+          <button id="startBtn" class="btn-primary">开始测试</button>
+          <button id="resumeBtn" class="btn-secondary" style="display:none;">继续上次进度</button>
+        </div>
+        <div class="subtle-note" id="resumeHint"></div>
+        <div class="footer-disclaimer">
+          本项目为非官方宝可梦主题同人测试（fan-made），仅供娱乐与粉丝交流，非商业用途。
+          与 Nintendo、GAME FREAK、Creatures Inc.、The Pokemon Company 及其关联方无任何关联，也未获得其认可或授权。
+        </div>
+      </div>
+    </section>
+
+    <section id="test" class="screen">
+      <div class="test-wrap card">
+        <div class="topbar">
+          <div class="progress"><span id="progressBar"></span></div>
+          <div class="progress-text" id="progressText">0 / 30</div>
+        </div>
+
+        <div class="question-nav">
+          <div class="question-position" id="questionPosition">第 1 / 30 题</div>
+          <div class="actions-row">
+            <button id="prevQuestionBtn" class="btn-secondary">上一题</button>
+            <button id="nextQuestionBtn" class="btn-secondary">下一题</button>
+          </div>
+        </div>
+
+        <div id="questionList" class="question-list"></div>
+
+        <div class="actions-bottom">
+          <div class="hint" id="testHint">把题做完，图鉴系统才会认你这只宝可梦。</div>
+          <div class="actions-row">
+            <button id="backIntroBtn" class="btn-secondary">返回首页</button>
+            <button id="submitBtn" class="btn-primary" disabled>提交并查看结果</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="result" class="screen">
+      <div class="result-wrap card">
+        <div class="result-layout">
+          <div class="result-top">
+            <div class="poster-box">
+              <div class="poster-dex" id="resultDexLabel">PMTI / DEX</div>
+              <div class="poster-art" id="posterArt">
+                <div class="art-glyph" id="artGlyph">PI</div>
+              </div>
+              <div class="poster-type" id="resultBattleRole">属性标签</div>
+              <div class="poster-mon" id="resultPosterMon">皮卡丘型</div>
+              <div class="poster-caption" id="posterCaption"></div>
+              <div class="poster-stats" id="posterStats"></div>
+            </div>
+
+            <div class="type-box">
+              <div class="type-kicker" id="resultModeKicker">你的 PMTI 主类型</div>
+              <div class="type-name" id="resultTypeName">Pikachu（皮卡丘型）</div>
+              <div class="match" id="matchBadge">匹配度 92%</div>
+              <div class="type-subname" id="resultTypeSub"></div>
+            </div>
+          </div>
+
+          <div class="analysis-box">
+            <h3>你的宝可梦画像</h3>
+            <p id="resultDesc"></p>
+          </div>
+
+          <div class="lore-box">
+            <h3>发布感更强的结果标签</h3>
+            <div class="lore-grid">
+              <div class="lore-card">
+                <h4>代表招式</h4>
+                <p id="signatureMove"></p>
+              </div>
+              <div class="lore-card">
+                <h4>适配训练家</h4>
+                <p id="bestTrainer"></p>
+              </div>
+              <div class="lore-card">
+                <h4>弱点属性</h4>
+                <p id="weaknessType"></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="lore-box">
+            <h3>训练家关系档案</h3>
+            <div class="lore-grid">
+              <div class="lore-card">
+                <h4>相处手感</h4>
+                <p id="bondStyle"></p>
+              </div>
+              <div class="lore-card">
+                <h4>最像的队伍定位</h4>
+                <p id="teamRole"></p>
+              </div>
+              <div class="lore-card">
+                <h4>触发高光时刻</h4>
+                <p id="signatureMoment"></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="top3-box">
+            <h3>你的 Top 3 相似宝可梦人格</h3>
+            <div id="top3List" class="top3-list"></div>
+          </div>
+
+          <div class="easter-box">
+            <h3>世界观彩蛋</h3>
+            <div class="easter-grid">
+              <div class="easter-card">
+                <h4>神兽倾向</h4>
+                <p id="legendaryTendency"></p>
+              </div>
+              <div class="easter-card">
+                <h4>御三家倾向</h4>
+                <p id="starterTendency"></p>
+              </div>
+              <div class="easter-card">
+                <h4>阵营彩蛋</h4>
+                <p id="factionTendency"></p>
+              </div>
+              <div class="easter-card">
+                <h4>地区倾向</h4>
+                <p id="regionTendency"></p>
+              </div>
+              <div class="easter-card">
+                <h4>职业倾向</h4>
+                <p id="careerTendency"></p>
+              </div>
+              <div class="easter-card">
+                <h4>队伍偏好</h4>
+                <p id="teamTendency"></p>
+              </div>
+            </div>
+          </div>
+
+          <div class="dim-box">
+            <h3>十五维度扫描</h3>
+            <div id="dimList" class="dim-list"></div>
+          </div>
+
+          <div class="note-box">
+            <h3>提示</h3>
+            <p id="funNote">本测试仅供娱乐和同人创作参考，更适合拿来做角色设定、朋友对照和二创文案，不适合作为任何严肃判断。</p>
+          </div>
+        </div>
+
+        <div class="result-actions" style="margin-top:22px;">
+          <div class="share-status" id="shareStatus"></div>
+          <button id="shareBtn" class="btn-secondary share-btn">导出分享图</button>
+          <button id="copySummaryBtn" class="btn-secondary">复制结果文案</button>
+          <button id="modifyAnswersBtn" class="btn-secondary">返回修改答案</button>
+          <button id="restartBtn" class="btn-secondary">重新测试</button>
+          <button id="toTopBtn" class="btn-primary">回到首页</button>
+        </div>
+        <div class="footer-disclaimer">
+          本项目为非官方宝可梦主题同人测试（fan-made），仅供娱乐与粉丝交流，非商业用途，不代表官方设定或官方立场。
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const dimensionMeta = {
+      S1: { name: "S1 训练家自信度", model: "自我模型" },
+      S2: { name: "S2 属性认知", model: "自我模型" },
+      S3: { name: "S3 进化驱动力", model: "自我模型" },
+      E1: { name: "E1 搭档信任度", model: "关系模型" },
+      E2: { name: "E2 羁绊投入度", model: "关系模型" },
+      E3: { name: "E3 独行边界感", model: "关系模型" },
+      A1: { name: "A1 世界友善感", model: "态度模型" },
+      A2: { name: "A2 联盟规则感", model: "态度模型" },
+      A3: { name: "A3 冒险目标感", model: "态度模型" },
+      Ac1: { name: "Ac1 行动冲劲", model: "行动模型" },
+      Ac2: { name: "Ac2 出招决断力", model: "行动模型" },
+      Ac3: { name: "Ac3 推进执行力", model: "行动模型" },
+      So1: { name: "So1 结识主动性", model: "社交模型" },
+      So2: { name: "So2 贴贴接受度", model: "社交模型" },
+      So3: { name: "So3 表达显性度", model: "社交模型" }
+    };
+
+    const questions = [
+      {
+        id: "q1", dim: "S1",
+        text: "看到别的训练家已经集齐徽章，而你还在第一座城市晃悠时，你更接近哪种心情？",
+        options: [
+          { label: "开始怀疑自己是不是根本不适合出门旅行。", value: 1 },
+          { label: "会有点酸，但还能继续走自己的节奏。", value: 2 },
+          { label: "我有我的路线，没必要和别人同步进度。", value: 3 }
+        ]
+      },
+      {
+        id: "q2", dim: "S1",
+        text: "如果有人认真夸你很强，你的第一反应通常是？",
+        options: [
+          { label: "他是不是看错人了。", value: 1 },
+          { label: "先收下，再观察一下是不是客套。", value: 2 },
+          { label: "谢谢，我也觉得我打得不错。", value: 3 }
+        ]
+      },
+      {
+        id: "q3", dim: "S2",
+        text: "面对“你到底适合什么属性”这个问题时，你的状态更像？",
+        options: [
+          { label: "完全迷路，今天像水系明天像幽灵系。", value: 1 },
+          { label: "隐约知道，但还在试技能池。", value: 2 },
+          { label: "很清楚自己的属性、节奏和定位。", value: 3 }
+        ]
+      },
+      {
+        id: "q4", dim: "S2",
+        text: "如果让你现在组一支代表“真正的你”的队伍，你会？",
+        options: [
+          { label: "组到一半就开始怀疑自己。", value: 1 },
+          { label: "大概能组出来，但可能还想改几次。", value: 2 },
+          { label: "基本能立刻定下来。", value: 3 }
+        ]
+      },
+      {
+        id: "q5", dim: "S3",
+        text: "你对“进化”这件事的感觉更像？",
+        options: [
+          { label: "能不折腾就不折腾，先过舒服日子。", value: 1 },
+          { label: "想成长，但不想把自己逼太紧。", value: 2 },
+          { label: "想不断升级，最好还能解锁新形态。", value: 3 }
+        ]
+      },
+      {
+        id: "q6", dim: "S3",
+        text: "别人眼里的“更强版本的你”，对你来说意味着什么？",
+        options: [
+          { label: "可有可无，我先把今天过完。", value: 1 },
+          { label: "有点吸引力，但不至于上头。", value: 2 },
+          { label: "很重要，我会认真朝那个方向练。", value: 3 }
+        ]
+      },
+      {
+        id: "q7", dim: "E1",
+        text: "你的搭档突然很久没回你消息，只说“我先处理点事”，你更容易怎么想？",
+        options: [
+          { label: "他是不是对我有意见，或者想离队。", value: 1 },
+          { label: "会想很多，但也知道不一定有事。", value: 2 },
+          { label: "他多半真的在忙，晚点再说。", value: 3 }
+        ]
+      },
+      {
+        id: "q8", dim: "E1",
+        text: "在关系里，你担心被抛下的频率是？",
+        options: [
+          { label: "挺高，脑内警报系统很勤奋。", value: 1 },
+          { label: "偶尔会响一下。", value: 2 },
+          { label: "不算高，我更容易默认关系是稳的。", value: 3 }
+        ]
+      },
+      {
+        id: "q9", dim: "E2",
+        text: "一旦认定某个搭档、朋友或队伍，你通常会？",
+        options: [
+          { label: "保持一点距离，别把情绪全压进去。", value: 1 },
+          { label: "会投入，但心里还会留余地。", value: 2 },
+          { label: "认真培养羁绊，容易越养越深。", value: 3 }
+        ]
+      },
+      {
+        id: "q10", dim: "E2",
+        text: "如果你的宝可梦对你表现出很强的依赖和信任，你会？",
+        options: [
+          { label: "先别太深，冷静一点。", value: 1 },
+          { label: "会高兴，但也想维持平衡。", value: 2 },
+          { label: "很吃这一套，立刻想把它宠上天。", value: 3 }
+        ]
+      },
+      {
+        id: "q11", dim: "E3",
+        text: "如果旅行中有人想全程和你绑定行动，你的感受更像？",
+        options: [
+          { label: "挺好，热闹一点也安心。", value: 1 },
+          { label: "看人和场景，能调。", value: 2 },
+          { label: "我还是需要自己的路线和节奏。", value: 3 }
+        ]
+      },
+      {
+        id: "q12", dim: "E3",
+        text: "哪句话更像你？",
+        options: [
+          { label: "关系越近越好，最好默契到不用说。", value: 1 },
+          { label: "亲近和空间我都要一点。", value: 2 },
+          { label: "再亲近也要保留独处和自由区域。", value: 3 }
+        ]
+      },
+      {
+        id: "q13", dim: "A1",
+        text: "对宝可梦世界里的陌生人，你默认的底色通常是？",
+        options: [
+          { label: "先防着点，剧情里坏人也不少。", value: 1 },
+          { label: "先观察，不急着下判断。", value: 2 },
+          { label: "大部分人应该还是善意的。", value: 3 }
+        ]
+      },
+      {
+        id: "q14", dim: "A1",
+        text: "路上有个陌生小孩把一颗树果递给你，你的第一反应是？",
+        options: [
+          { label: "这不会是什么支线陷阱吧。", value: 1 },
+          { label: "有点懵，但会先看情况。", value: 2 },
+          { label: "哇，好可爱，谢谢你。", value: 3 }
+        ]
+      },
+      {
+        id: "q15", dim: "A2",
+        text: "联盟规定今天必须留在宝可梦中心登记，但朋友约你夜探遗迹，你会？",
+        options: [
+          { label: "先冲遗迹，规则又不是神谕。", value: 1 },
+          { label: "看看能不能想个折中办法。", value: 2 },
+          { label: "先把该走的流程走完。", value: 3 }
+        ]
+      },
+      {
+        id: "q16", dim: "A2",
+        text: "你对“标准流程”这件事的态度更像？",
+        options: [
+          { label: "能跳就跳，我更相信临场发挥。", value: 1 },
+          { label: "有用就用，没用就改。", value: 2 },
+          { label: "有秩序会让我安心很多。", value: 3 }
+        ]
+      },
+      {
+        id: "q17", dim: "A3",
+        text: "每次开始一段新的冒险时，你通常有多明确的目标？",
+        options: [
+          { label: "没什么特别目标，先逛着看。", value: 1 },
+          { label: "有几个模糊方向。", value: 2 },
+          { label: "目标很明确，我知道自己要去哪。", value: 3 }
+        ]
+      },
+      {
+        id: "q18", dim: "A3",
+        text: "如果有人问你“你旅行到底是为了什么”，你会更像？",
+        options: [
+          { label: "说实话，我也常常答不上来。", value: 1 },
+          { label: "大概知道，但没法讲得特别清楚。", value: 2 },
+          { label: "我心里一直有一个很明确的答案。", value: 3 }
+        ]
+      },
+      {
+        id: "q19", dim: "Ac1",
+        text: "面对难打的道馆战，你更容易被哪种念头驱动？",
+        options: [
+          { label: "别翻车就行。", value: 1 },
+          { label: "既想赢，也不想太狼狈。", value: 2 },
+          { label: "我就是想赢，而且想赢得漂亮。", value: 3 }
+        ]
+      },
+      {
+        id: "q20", dim: "Ac1",
+        text: "发现一条未知支线时，你一般会？",
+        options: [
+          { label: "先算算风险和消耗。", value: 1 },
+          { label: "有点想去，先观望一下。", value: 2 },
+          { label: "直接去看看，说不定能捡到奇遇。", value: 3 }
+        ]
+      },
+      {
+        id: "q21", dim: "Ac2",
+        text: "轮到你决定下一站去哪时，你通常？",
+        options: [
+          { label: "会纠结很久，地图来回看。", value: 1 },
+          { label: "想一下，但还能做决定。", value: 2 },
+          { label: "很快拍板，先走再说。", value: 3 }
+        ]
+      },
+      {
+        id: "q22", dim: "Ac2",
+        text: "对战时四个技能都能用，你更像？",
+        options: [
+          { label: "脑内先开一轮模拟器。", value: 1 },
+          { label: "犹豫一下，按直觉补一刀。", value: 2 },
+          { label: "秒选，动作比思考还快。", value: 3 }
+        ]
+      },
+      {
+        id: "q23", dim: "Ac3",
+        text: "有人夸你执行力强，你心里更像哪句？",
+        options: [
+          { label: "我一般都拖到最后才突然觉醒。", value: 1 },
+          { label: "还行，状态来了就挺能推。", value: 2 },
+          { label: "任务不落地，我心里会一直挂着。", value: 3 }
+        ]
+      },
+      {
+        id: "q24", dim: "Ac3",
+        text: "你做旅行计划时的真实情况通常是？",
+        options: [
+          { label: "会列，但最后靠缘分推进。", value: 1 },
+          { label: "有些能执行，有些会漂。", value: 2 },
+          { label: "定下来的事一般都会推进。", value: 3 }
+        ]
+      },
+      {
+        id: "q25", dim: "So1",
+        text: "到了新城镇，朋友让你和一群陌生训练家一起玩，你更接近？",
+        options: [
+          { label: "先观察，最好别人来开话题。", value: 1 },
+          { label: "能聊，但不一定主动起头。", value: 2 },
+          { label: "我会主动去打招呼和串场。", value: 3 }
+        ]
+      },
+      {
+        id: "q26", dim: "So1",
+        text: "朋友带朋友一起加入你的队伍一天，你通常会？",
+        options: [
+          { label: "有点距离感，怕不自然。", value: 1 },
+          { label: "看对方状态，能玩就玩。", value: 2 },
+          { label: "很快就能聊起来，顺手把气氛热起来。", value: 3 }
+        ]
+      },
+      {
+        id: "q27", dim: "So2",
+        text: "有人一上来就对你很热情、很黏，你通常？",
+        options: [
+          { label: "还挺受用，热络一点也不错。", value: 1 },
+          { label: "看情况，不同人不同反应。", value: 2 },
+          { label: "会本能想后退半步。", value: 3 }
+        ]
+      },
+      {
+        id: "q28", dim: "So2",
+        text: "你更像哪一种队友？",
+        options: [
+          { label: "熟了以后很容易把人拉进内圈。", value: 1 },
+          { label: "会亲近，但不至于完全无边界。", value: 2 },
+          { label: "关系再好，也会保留界线。", value: 3 }
+        ]
+      },
+      {
+        id: "q29", dim: "So3",
+        text: "明明心里有不同意见，但最后没说出来时，你最常见的原因是？",
+        options: [
+          { label: "这种情况不多，我一般会直说。", value: 1 },
+          { label: "我会看气氛和关系。", value: 2 },
+          { label: "我不想把最真实的一面全放出来。", value: 3 }
+        ]
+      },
+      {
+        id: "q30", dim: "So3",
+        text: "你会不会在不同人面前切换不同模式？",
+        options: [
+          { label: "不太会，我大多时候都比较直给。", value: 1 },
+          { label: "有一点，但还算稳定。", value: 2 },
+          { label: "会，而且切换得挺自然。", value: 3 }
+        ]
+      }
+    ];
+
+    const TYPE_LIBRARY = {
+      PIKACHU: {
+        code: "PIKACHU",
+        cn: "皮卡丘型",
+        en: "Pikachu",
+        tag: "电系 / 活跃核心",
+        intro: "你像队伍里那个先把场子点亮的人。",
+        desc: "皮卡丘型通常反应快、存在感强、热启动能力高。你很容易在群体里成为那个主动接线的人，不一定想当领袖，但常常自然站到前排。你对人与气氛的流动很敏感，能快速建立连接，也愿意把自己的能量往外给。只要状态在线，你会是那种让整支队伍都更有电的人。",
+        bond: "你和人熟起来很快，喜欢那种一来一回有火花的互动。只要对面愿意接你的球，你会越聊越亮。",
+        role: "先手热场位。开路、破冰、打出第一段情绪优势，这些事很适合你。",
+        signature: "当队伍气压偏低、所有人都还没进入状态时，你往往能第一个把电接通。",
+        palette: ["rgba(255, 211, 72, 0.42)", "rgba(224, 81, 34, 0.22)", "#fffdf1", "#fff4d8"],
+        art: { glyph: "PI", glyphColor: "rgba(181,114,9,0.92)", core: "rgba(255,232,146,0.84)", ring: "rgba(255,195,39,0.26)" }
+      },
+      EEVEE: {
+        code: "EEVEE",
+        cn: "伊布型",
+        en: "Eevee",
+        tag: "一般系 / 高适配",
+        intro: "你最强的地方，可能就是还有很多种未来。",
+        desc: "伊布型最大的特征不是单点爆发，而是可塑性。你往往能根据环境、关系和阶段调整自己的姿态，不轻易把自己锁死在唯一剧本里。你不一定总是最锋利的那个，但很会顺着成长机会迭代自己。别人看你像柔软，其实那也是一种稀有的生存强度。",
+        bond: "你不急着把关系拉到最满，但会根据对方的节奏慢慢调整出合适的距离。",
+        role: "适配器型队员。你最擅长补位，让队伍在不同局面里都不至于卡死。",
+        signature: "当别人还在纠结自己非得是哪一类时，你已经悄悄长出了新的分支。",
+        palette: ["rgba(198, 151, 101, 0.34)", "rgba(240, 185, 75, 0.20)", "#fffdf8", "#fff5e8"],
+        art: { glyph: "EV", glyphColor: "rgba(125,77,33,0.9)", core: "rgba(227,196,167,0.78)", ring: "rgba(173,115,55,0.20)" }
+      },
+      LUCARIO: {
+        code: "LUCARIO",
+        cn: "路卡利欧型",
+        en: "Lucario",
+        tag: "格斗 / 钢系 / 自律感",
+        intro: "你像那种能把意志练成招式的人。",
+        desc: "路卡利欧型往往目标感明确，判断干净，行动里有克制也有锋芒。你对成长不是嘴上说说，会愿意投入训练、整理节奏、提高完成度。你通常不太喜欢失控的状态，更信任通过练习和专注换来的稳定。队伍里如果要找一个能扛住强度、又不轻易乱阵脚的人，常常就是你。",
+        bond: "你不是最黏人的类型，但一旦认定搭档，就会用很稳定的方式长期并肩。",
+        role: "主力打手兼副队长。强度、秩序和完成度都能兼顾。",
+        signature: "大家开始乱的时候，你往往会更冷静，像是波导自己把路照了出来。",
+        palette: ["rgba(69, 107, 181, 0.36)", "rgba(104, 129, 153, 0.24)", "#f8fbff", "#edf4ff"],
+        art: { glyph: "LU", glyphColor: "rgba(43,77,146,0.92)", core: "rgba(148,182,239,0.74)", ring: "rgba(53,97,174,0.22)" }
+      },
+      SNORLAX: {
+        code: "SNORLAX",
+        cn: "卡比兽型",
+        en: "Snorlax",
+        tag: "一般系 / 稳定续航",
+        intro: "你并不急着冲，但你很难被真正推倒。",
+        desc: "卡比兽型通常给人稳、厚、慢半拍但不慌的印象。你未必追求最卷的成长路线，更重视舒服、真实和低损耗的生活节奏。你不喜欢被人强拉着跑，也不爱为了虚假的效率折腾自己。可一旦你认定某件事值得守住，你的耐久度和稳定感会非常惊人。",
+        bond: "你相处起来很松弛，不会频繁索取情绪，但会用陪伴和在场给人安定感。",
+        role: "耐久型前排。平时不抢戏，关键时刻能把线稳住。",
+        signature: "当所有人都开始慌时，你那种慢半拍的镇定反而成了全队的缓冲垫。",
+        palette: ["rgba(65, 102, 125, 0.34)", "rgba(238, 214, 169, 0.22)", "#f8fbfc", "#eef5f7"],
+        art: { glyph: "SN", glyphColor: "rgba(52,85,107,0.9)", core: "rgba(175,209,228,0.68)", ring: "rgba(73,114,140,0.20)" }
+      },
+      GENGAR: {
+        code: "GENGAR",
+        cn: "耿鬼型",
+        en: "Gengar",
+        tag: "幽灵系 / 机灵侧翼",
+        intro: "你身上有一种又坏又聪明的可爱劲。",
+        desc: "耿鬼型的人通常脑子转得快，观察细，擅长用一点幽默、恶作剧或机锋给局面重新上色。你不一定总把真话摆在明面上，但并不代表你没在认真感受。很多时候，你会通过旁敲侧击、表演感和反差感表达自己。你很适合成为队伍里那个有梗、有脑子、还能在关键时刻突然补位的人。",
+        bond: "你不太习惯直白示弱，但会用逗人、接梗和突然出现的贴心动作表达在意。",
+        role: "奇袭侧翼。补刀、破局、换视角，都是你的主场。",
+        signature: "局面太正经的时候，你往往会成为那个用一个坏笑把僵局撬开的家伙。",
+        palette: ["rgba(104, 72, 151, 0.36)", "rgba(36, 24, 79, 0.24)", "#fbf8ff", "#f3ecff"],
+        art: { glyph: "GE", glyphColor: "rgba(91,54,145,0.92)", core: "rgba(179,145,231,0.76)", ring: "rgba(104,72,151,0.24)" }
+      },
+      BULBASAUR: {
+        code: "BULBASAUR",
+        cn: "妙蛙种子型",
+        en: "Bulbasaur",
+        tag: "草系 / 成长培育",
+        intro: "你像一株不吵不闹，但会一直长的种子。",
+        desc: "妙蛙种子型通常温和、耐心、偏长期主义。你可能不是最爱抢镜的人，却很擅长稳定积累，一点点把关系和能力养起来。你身上常有一种让人放松的可靠感，不张扬，但很好相处。你相信成长需要时间，也愿意给自己和别人时间。",
+        bond: "你最会用持续的稳定感养关系，不急着收割亲密，但会慢慢把信任种出来。",
+        role: "培育辅助位。你擅长让队伍在长期里变得更健康、更稳、更能长。",
+        signature: "那些需要时间才能见效的事，交给你往往最容易真正开花。",
+        palette: ["rgba(94, 168, 98, 0.34)", "rgba(108, 210, 159, 0.18)", "#f8fff8", "#eefcef"],
+        art: { glyph: "BU", glyphColor: "rgba(59,128,61,0.92)", core: "rgba(164,227,161,0.74)", ring: "rgba(85,171,91,0.22)" }
+      },
+      SQUIRTLE: {
+        code: "SQUIRTLE",
+        cn: "杰尼龟型",
+        en: "Squirtle",
+        tag: "水系 / 轻松社交",
+        intro: "你像那种看起来圆滑，其实很会拿捏距离的人。",
+        desc: "杰尼龟型通常社交弹性不错，进可热场，退可自保。你对环境变化的适应能力强，既能跟人玩在一起，也不会轻易把自己交出去。你不太容易被一时情绪冲昏头，更擅长用柔软的方式把局面带顺。很多人会觉得和你相处不累，这就是你的强项。",
+        bond: "你会给人一种很好接近的感觉，但真正的核心区域不会随便开放。",
+        role: "机动支援位。擅长润滑气氛，也擅长在需要时撤退重整。",
+        signature: "当局面有点卡、有点尴尬时，你经常能用轻巧的方式把它重新盘活。",
+        palette: ["rgba(76, 150, 219, 0.34)", "rgba(134, 197, 255, 0.20)", "#f8fcff", "#edf7ff"],
+        art: { glyph: "SQ", glyphColor: "rgba(48,109,182,0.92)", core: "rgba(149,213,255,0.74)", ring: "rgba(76,150,219,0.24)" }
+      },
+      CHARIZARD: {
+        code: "CHARIZARD",
+        cn: "喷火龙型",
+        en: "Charizard",
+        tag: "火 / 飞行系 / 进攻核心",
+        intro: "你的火焰感，往往先于你本人到场。",
+        desc: "喷火龙型通常有明显的存在感、自尊和向上冲的劲头。你不一定时时刻刻都在高燃，但心里通常有一个不太甘于平庸的引擎。你愿意争取、证明、升级，也比较吃“我要打出像样结果”的那套驱动。状态好的时候，你会带着一股非常显眼的主角气。",
+        bond: "你希望关系里有并肩感、认可感和一点燃起来的共鸣，不喜欢长期被低估。",
+        role: "主 C 型输出。承担火力、承担期待，也承担高光。",
+        signature: "当赛场、竞争、挑战或舞台感出现时，你的能量常常会被瞬间点燃。",
+        palette: ["rgba(244, 118, 44, 0.40)", "rgba(244, 187, 70, 0.22)", "#fffaf3", "#fff0df"],
+        art: { glyph: "CH", glyphColor: "rgba(183,69,17,0.92)", core: "rgba(255,182,118,0.80)", ring: "rgba(244,118,44,0.24)" }
+      },
+      GARDEVOIR: {
+        code: "GARDEVOIR",
+        cn: "沙奈朵型",
+        en: "Gardevoir",
+        tag: "超能力 / 妖精系 / 情感感知",
+        intro: "你对气氛和情绪的感知，通常比别人更早一点。",
+        desc: "沙奈朵型的人共情力往往很高，对关系里的细小变化很敏感，也很容易认真对待自己认定的人。你擅长照顾、陪伴、理解和稳定别人，但这也意味着你容易吸收外界情绪。你的力量不一定总是高声量的，它更多体现在那种很细腻的保护欲和感受力上。",
+        bond: "你会很认真地感受别人，也会把照顾和保护悄悄做在前面。",
+        role: "感知与护场位。你不一定抢先输出，但很能稳住情绪场。",
+        signature: "当有人状态快掉线时，你常常是最先察觉、也最先伸手的人。",
+        palette: ["rgba(109, 205, 177, 0.28)", "rgba(240, 152, 186, 0.20)", "#fffdff", "#f7f1ff"],
+        art: { glyph: "GA", glyphColor: "rgba(44,135,115,0.92)", core: "rgba(193,241,229,0.80)", ring: "rgba(221,114,164,0.18)" }
+      },
+      PSYDUCK: {
+        code: "PSYDUCK",
+        cn: "可达鸭型",
+        en: "Psyduck",
+        tag: "水系 / 混乱爆发",
+        intro: "你的脑内偶尔像开了十几个标签页，但也因此很有戏剧性。",
+        desc: "可达鸭型通常有点敏感、容易过载，也可能在外人眼里显得有点飘忽。但你并不是真的没有力量，你更像是力量来得不那么线性。你会经历思绪打架、状态忽明忽暗、偶尔手忙脚乱，可一旦某个点被真正激活，也能突然交出超乎预期的输出。",
+        bond: "你需要被理解，而不是被催促。越安全，你越能把真正的强度放出来。",
+        role: "波动型爆发位。平时像谜，关键时刻突然给大招。",
+        signature: "当情绪、压力和灵感在某个点同时撞上时，你会出现非常戏剧性的输出。",
+        palette: ["rgba(255, 210, 88, 0.34)", "rgba(105, 173, 222, 0.18)", "#fffdf3", "#fff8e3"],
+        art: { glyph: "PS", glyphColor: "rgba(180,126,18,0.92)", core: "rgba(255,235,168,0.84)", ring: "rgba(105,173,222,0.18)" }
+      },
+      MEW: {
+        code: "MEW",
+        cn: "梦幻型",
+        en: "Mew",
+        tag: "超能力系 / 自由奇想",
+        intro: "你像那种很难被单一路线定义的人。",
+        desc: "梦幻型的人往往轻盈、灵动、好奇心强，也不太甘心被固定模板收编。你可能喜欢探索各种可能性，对新鲜感、创意和非标准路径有天然兴趣。你不是那种特别愿意被严密流程驯化的人，很多时候，你的生命力就来自那种跳脱和自由。",
+        bond: "你喜欢保留自由流动的空间，但对真正好玩、好奇、互相点亮的人会很快靠近。",
+        role: "奇想型游走位。负责把队伍带去标准攻略之外的地图。",
+        signature: "一旦环境允许你即兴发挥，你会展现出让人很难预测的灵气。",
+        palette: ["rgba(255, 176, 223, 0.28)", "rgba(169, 142, 255, 0.18)", "#fffafe", "#fff0fb"],
+        art: { glyph: "ME", glyphColor: "rgba(179,84,138,0.92)", core: "rgba(255,213,241,0.84)", ring: "rgba(169,142,255,0.18)" }
+      },
+      DRAGONITE: {
+        code: "DRAGONITE",
+        cn: "快龙型",
+        en: "Dragonite",
+        tag: "龙 / 飞行系 / 温厚强者",
+        intro: "你看起来温和，但真正需要扛事时会非常能扛。",
+        desc: "快龙型通常兼具力量感和善意，不喜欢把锋芒无意义地甩给别人，但真正到需要承担、保护和推进的时候，你又很容易站出来。你身上常有一种稳定的大体量感，不爱小题大做，却能在关键时刻给人安全感。",
+        bond: "你相处起来温厚，通常不会压人，但真正认定的人会被你稳稳接住。",
+        role: "重装护航位。扛压、托底、带人飞，都很像你的工作。",
+        signature: "当别人开始顶不住时，你会自然切进承担模式，像把整队都往前托了一把。",
+        palette: ["rgba(246, 169, 77, 0.34)", "rgba(103, 196, 205, 0.18)", "#fffdf8", "#fff3e3"],
+        art: { glyph: "DR", glyphColor: "rgba(181,106,18,0.92)", core: "rgba(255,223,173,0.84)", ring: "rgba(95,186,195,0.18)" }
+      },
+      JIGGLYPUFF: {
+        code: "JIGGLYPUFF",
+        cn: "胖丁型",
+        en: "Jigglypuff",
+        tag: "妖精 / 一般系 / 气氛制造",
+        intro: "你很适合把世界变得更软一点，也更好玩一点。",
+        desc: "胖丁型的人往往有表现力、感染力和一点戏剧天赋。你可能在情绪表达、氛围营造、让人放松这件事上很有手感，也很在意互动是否有趣、有温度。你有时会因为不被理解而闹点小脾气，但这通常恰好说明你对连接是认真的。",
+        bond: "你很重视互动是不是有回应、有共鸣、有被认真接住的感觉。",
+        role: "氛围法师。让人放松、让场子有戏，是你的自然技能。",
+        signature: "当环境太干、太硬、太无聊时，你往往能用情绪和表现力把它重新唱活。",
+        palette: ["rgba(255, 183, 210, 0.34)", "rgba(247, 110, 173, 0.18)", "#fffafd", "#fff0f6"],
+        art: { glyph: "JI", glyphColor: "rgba(191,90,144,0.92)", core: "rgba(255,221,236,0.86)", ring: "rgba(247,110,173,0.20)" }
+      },
+      MEOWTH: {
+        code: "MEOWTH",
+        cn: "喵喵型",
+        en: "Meowth",
+        tag: "一般系 / 机会主义",
+        intro: "你很会看局势，也很懂怎么让自己不吃亏。",
+        desc: "喵喵型通常脑子活、反应快、现实感强。你擅长从复杂局面里找资源、找台阶、找最合适自己的落点，不太容易陷入毫无回报的死磕。你未必总是最理想主义的那一个，但往往很清楚什么值得投、什么不值得。",
+        bond: "你不轻易把自己放进必输局，但对真正值回票价的人和关系会投入得比外表更深。",
+        role: "资源调度位。擅长看牌、算收益、找局面的真实出口。",
+        signature: "当别人还在情绪上头时，你已经把成本、收益和撤退路线都盘过一遍了。",
+        palette: ["rgba(255, 224, 129, 0.32)", "rgba(169, 123, 54, 0.20)", "#fffdf7", "#fff7e6"],
+        art: { glyph: "MW", glyphColor: "rgba(152,104,33,0.92)", core: "rgba(250,233,173,0.82)", ring: "rgba(181,133,63,0.20)" }
+      },
+      LAPRAS: {
+        code: "LAPRAS",
+        cn: "拉普拉斯型",
+        en: "Lapras",
+        tag: "水 / 冰系 / 长途陪伴",
+        intro: "你像一条安静但很可靠的航线。",
+        desc: "拉普拉斯型通常温柔、包容、耐心，擅长陪伴而不是抢夺镜头。你对关系的投入往往是稳态型的，不会一下子烧得很猛，但会持续、细水长流地在场。别人可能会把你视作“可以放心坐上去一起走很远的人”。",
+        bond: "你的关系风格是长期陪跑型，不一定热烈，但非常能走远。",
+        role: "续航护送位。你最强的不是一下子冲多快，而是能陪人走很长的海路。",
+        signature: "当别人需要一个稳定、宽阔、不会突然翻船的同行者时，你的价值会非常清晰。",
+        palette: ["rgba(106, 190, 224, 0.30)", "rgba(171, 214, 255, 0.22)", "#f8feff", "#edf9ff"],
+        art: { glyph: "LA", glyphColor: "rgba(47,126,167,0.92)", core: "rgba(202,240,255,0.84)", ring: "rgba(106,190,224,0.20)" }
+      },
+      MIMIKYU: {
+        code: "MIMIKYU",
+        cn: "谜拟丘型",
+        en: "Mimikyu",
+        tag: "幽灵 / 妖精系 / 隐秘真心",
+        intro: "你不是没有真心，只是不太会轻易把真心裸露出来。",
+        desc: "谜拟丘型通常内心很细，也比较保护自己的核心部分。你可能会通过伪装、缓冲、角色感或安静退后，来减少自己受伤的概率。你并不是冷漠，恰恰相反，很多时候是因为太在乎，所以才不敢一下子露出最柔软的部分。",
+        bond: "你需要先确认安全，才会一点点把真实心情递出来。越被温柔对待，越会显露真心。",
+        role: "后排真心位。平时像罩着布，真正熟了以后会非常有黏性和深度。",
+        signature: "当你感到被理解而不被逼问时，那些藏得很深的柔软会突然变得特别动人。",
+        palette: ["rgba(244, 221, 127, 0.28)", "rgba(88, 69, 115, 0.22)", "#fffef7", "#f7f2ff"],
+        art: { glyph: "MI", glyphColor: "rgba(101,78,132,0.92)", core: "rgba(255,240,178,0.82)", ring: "rgba(88,69,115,0.20)" }
+      }
+    };
+
+    const NORMAL_TYPES = [
+      { code: "PIKACHU", pattern: "HMH-HMH-HMH-HHH-LML" },
+      { code: "EEVEE", pattern: "MMH-MMM-HMH-MMM-MMM" },
+      { code: "LUCARIO", pattern: "HHH-HMH-HHH-HHH-MHH" },
+      { code: "SNORLAX", pattern: "MMH-HMM-MML-LML-LLL" },
+      { code: "GENGAR", pattern: "HMH-MMH-MML-MHM-MHH" },
+      { code: "BULBASAUR", pattern: "MMH-HMH-HMH-MMH-LML" },
+      { code: "SQUIRTLE", pattern: "MMH-MMH-MMM-MMM-MML" },
+      { code: "CHARIZARD", pattern: "HHH-MMH-HHH-HHH-MLH" },
+      { code: "GARDEVOIR", pattern: "MMH-LHH-HMH-MMH-MLH" },
+      { code: "PSYDUCK", pattern: "LMM-LMM-LMM-LLM-LMM" },
+      { code: "MEW", pattern: "MHH-MMM-HML-MHM-MMH" },
+      { code: "DRAGONITE", pattern: "HHM-HMH-HMH-HMH-LML" },
+      { code: "JIGGLYPUFF", pattern: "MMH-MHH-HMM-MMH-LLL" },
+      { code: "MEOWTH", pattern: "MMH-MMM-MMM-MHM-MMH" },
+      { code: "LAPRAS", pattern: "MMH-HHH-HMH-MMH-LMH" },
+      { code: "MIMIKYU", pattern: "LMH-LMH-LMM-LMM-HHH" }
+    ];
+
+    const TYPE_SYSTEM_META = {
+      PIKACHU: { move: "十万伏特型热启动", trainer: "适合外向、愿意给回应、喜欢一起闯新地图的训练家。", weakness: "长期低反馈、冷场和持续拖延会让你掉电。", roast: "你不是社交牛，是社交插座。", coreDims: ["So1", "Ac1", "S1"] },
+      EEVEE: { move: "适应力进化", trainer: "适合愿意一起试错、允许你慢慢长成不同版本自己的训练家。", weakness: "被过早定义、被强行定型会让你卡住。", roast: "你的人设不是不稳定，是更新太频繁。", coreDims: ["S2", "A1", "A3"] },
+      LUCARIO: { move: "波导同步", trainer: "适合尊重边界、也尊重训练强度的成熟型训练家。", weakness: "混乱管理、低标准和失控节奏会让你烦到关机。", roast: "别人练情绪价值，你练内功心法。", coreDims: ["S3", "Ac2", "Ac3"] },
+      SNORLAX: { move: "厚脂肪式稳定场", trainer: "适合不过度催促、知道你慢热但可靠的人。", weakness: "被迫高压加速、被频繁打断休息节奏会让你原地摆烂。", roast: "你的最终奥义是以不变应万卷。", coreDims: ["E3", "A2", "Ac3"] },
+      GENGAR: { move: "影子恶作剧", trainer: "适合接得住你梗、也接得住你暗线情绪的训练家。", weakness: "过度严肃、读不懂玩笑和缺少互动会让你失去兴致。", roast: "你的人际策略叫吓别人一跳再递糖。", coreDims: ["So3", "S2", "A1"] },
+      BULBASAUR: { move: "寄生种子式慢养", trainer: "适合珍惜长期关系、愿意一起慢慢成长的人。", weakness: "短期功利、过度比较和拔苗助长会伤到你。", roast: "你连发芽都带着项目管理感。", coreDims: ["E2", "A3", "Ac3"] },
+      SQUIRTLE: { move: "高速转场的水流润滑", trainer: "适合轻松、会聊天、又不强黏的搭档型训练家。", weakness: "情绪过载和社交控制欲过强会让你迅速缩壳。", roast: "你看着像随和，其实撤退路线背得滚瓜烂熟。", coreDims: ["So1", "So2", "A1"] },
+      CHARIZARD: { move: "爆炎冲顶", trainer: "适合会认可你的野心，也敢和你对高标准的人。", weakness: "被轻视、被压着飞、被长期泼冷水会让你炸毛。", roast: "你不是爱表现，你是出生自带主舞台。", coreDims: ["S3", "Ac1", "S1"] },
+      GARDEVOIR: { move: "超感护场", trainer: "适合温柔、有分寸、懂得珍惜细腻情绪的人。", weakness: "情绪粗暴、忽冷忽热和关系失真会让你很受伤。", roast: "你是那种会替全队先感受一遍的人。", coreDims: ["E1", "E2", "A1"] },
+      PSYDUCK: { move: "混乱临界爆发", trainer: "适合耐心、不催促、能陪你把混乱过成节奏的人。", weakness: "高压倒计时和连续刺激会让你脑内炸服。", roast: "你的人生像缓存转圈，但偶尔会秒开神技。", coreDims: ["S1", "Ac2", "Ac3"] },
+      MEW: { move: "梦幻漂移", trainer: "适合给你自由度、愿意陪你探索偏门路线的人。", weakness: "死板流程、重复劳动和被强行定义会让你消失。", roast: "你不是不按套路，你是根本没有安装套路。", coreDims: ["S2", "A2", "Ac1"] },
+      DRAGONITE: { move: "龙系护航", trainer: "适合真诚、稳定、懂得感激你托底的人。", weakness: "长期单向承担和别人把你的可靠当默认会耗损你。", roast: "你像一台长得很暖的重型运输机。", coreDims: ["S1", "E2", "Ac3"] },
+      JIGGLYPUFF: { move: "舞台感染力", trainer: "适合会给情绪回应、愿意一起玩和一起表达的人。", weakness: "长期冷处理和被忽略会让你气到拿麦克风当锤子。", roast: "你最大的被动技是没人能假装没看见你。", coreDims: ["So1", "E2", "So3"] },
+      MEOWTH: { move: "机会点嗅探", trainer: "适合现实、聪明、尊重边界和资源交换逻辑的人。", weakness: "空头承诺和低回报高消耗局面对你极不友好。", roast: "你不是市侩，是系统自带收益率筛选器。", coreDims: ["S2", "A2", "So3"] },
+      LAPRAS: { move: "长航陪伴", trainer: "适合愿意慢慢来、重视长期默契和稳定投入的人。", weakness: "情绪波动过大和过度索取会让你慢慢沉下去。", roast: "别人谈陪伴像口号，你谈陪伴像航线。", coreDims: ["E1", "E2", "A3"] },
+      MIMIKYU: { move: "伪装之下的真心一击", trainer: "适合不逼问、不硬拆伪装、会慢慢建立安全感的人。", weakness: "过度窥探、粗暴解读和强行亲近会让你更躲。", roast: "你不是高冷，只是心门外面先套了三层防尘袋。", coreDims: ["E3", "So2", "So3"] }
+    };
+
+    const DIM_EXPLANATIONS = {
+      S1: {
+        L: "你对自己的强度不太敢轻易下结论，容易先看到短板。",
+        M: "自信度会跟着状态浮动，顺风时很稳，逆风时会收一点。",
+        H: "你对自己的能力和节奏比较有底，不太容易被别人一句话带偏。"
+      },
+      S2: {
+        L: "你的属性认知还在迷雾里，常常一边前进一边试错。",
+        M: "你大致知道自己是什么系，但还想继续微调技能池。",
+        H: "你对自己的定位、节奏和适配环境都比较清楚。"
+      },
+      S3: {
+        L: "比起高速进化，你更想先保留舒适区和稳定度。",
+        M: "你有成长欲，但通常不会把自己逼成满级高压锅。",
+        H: "你很容易被升级、进化和更高完成度点燃。"
+      },
+      E1: {
+        L: "你在关系里的警报器比较敏感，风吹草动都容易多想。",
+        M: "你会摇摆在信任和怀疑之间，需要一点确认。",
+        H: "你更愿意先相信羁绊本身，不容易被小波动吓散。"
+      },
+      E2: {
+        L: "你的情感投入偏谨慎，羁绊不是不给，只是不会一次全开。",
+        M: "你会认真投入，但通常会给自己留一点缓冲。",
+        H: "一旦认定，你很容易真心下场，情绪和精力都给得很足。"
+      },
+      E3: {
+        L: "你比较享受贴近和陪伴，关系里的温度感很重要。",
+        M: "你会在亲近和独立之间动态平衡。",
+        H: "你很重视独处、边界和按自己节奏行动的空间。"
+      },
+      A1: {
+        L: "你看世界时偏谨慎，第一反应通常是先防守。",
+        M: "你既不盲信也不彻底戒备，先观察是你的本能。",
+        H: "你更容易默认世界里仍然存在足够多的善意。"
+      },
+      A2: {
+        L: "你更喜欢灵活绕路，不太想被标准流程捆死。",
+        M: "你会视情况决定守规还是变通。",
+        H: "有秩序和流程感会让你更舒服，也更能发挥。"
+      },
+      A3: {
+        L: "你的冒险像边走边看，目标感不是第一驱动。",
+        M: "你大致有方向，但也允许自己保留一点漂移空间。",
+        H: "你的目标感比较明确，知道自己想往哪片地图走。"
+      },
+      Ac1: {
+        L: "比起硬冲，你会先评估翻车成本和风险。",
+        M: "你既想推进，也会考虑别把自己摔得太惨。",
+        H: "你更容易被赢面、成果和突破感激活。"
+      },
+      Ac2: {
+        L: "你出招前容易多想两轮，脑内对战比较精彩。",
+        M: "你会犹豫，但通常不会一直卡死。",
+        H: "你决策速度比较快，拍板后也不爱反复回看。"
+      },
+      Ac3: {
+        L: "你的推进力容易受状态影响，偶尔靠最后时刻觉醒。",
+        M: "你能做事，但执行节奏有时稳有时飘。",
+        H: "事情只要挂在心上，你通常会想办法把它落地。"
+      },
+      So1: {
+        L: "你社交启动偏慢热，更习惯先观察再进入。",
+        M: "你能社交，也能独处，启动强度比较弹性。",
+        H: "你更愿意主动开口、开场和把局面转热。"
+      },
+      So2: {
+        L: "你对亲近和热络的接受度较高，熟了容易拉近距离。",
+        M: "你会看人看场景调整边界。",
+        H: "你边界感偏强，需要安全距离来维持舒服。"
+      },
+      So3: {
+        L: "你表达比较直球，内外通常差得不大。",
+        M: "你会顾及场面，但仍保留一部分真实直给。",
+        H: "你很会按场景切换自己，真实感会分层释放。"
+      }
+    };
+
+    const dimensionOrder = ["S1", "S2", "S3", "E1", "E2", "E3", "A1", "A2", "A3", "Ac1", "Ac2", "Ac3", "So1", "So2", "So3"];
+    const STORAGE_KEY = "pmti-progress-v2";
+
+    const app = {
+      answers: {},
+      shuffledQuestions: [],
+      currentQuestionIndex: 0
+    };
+
+    const screens = {
+      intro: document.getElementById("intro"),
+      test: document.getElementById("test"),
+      result: document.getElementById("result")
+    };
+
+    const questionList = document.getElementById("questionList");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const submitBtn = document.getElementById("submitBtn");
+    const testHint = document.getElementById("testHint");
+    const shareBtn = document.getElementById("shareBtn");
+    const shareStatus = document.getElementById("shareStatus");
+    const resumeBtn = document.getElementById("resumeBtn");
+    const resumeHint = document.getElementById("resumeHint");
+    const prevQuestionBtn = document.getElementById("prevQuestionBtn");
+    const nextQuestionBtn = document.getElementById("nextQuestionBtn");
+    const questionPosition = document.getElementById("questionPosition");
+    const copySummaryBtn = document.getElementById("copySummaryBtn");
+    const modifyAnswersBtn = document.getElementById("modifyAnswersBtn");
+
+    function showScreen(name) {
+      Object.entries(screens).forEach(([key, el]) => {
+        el.classList.toggle("active", key === name);
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function shuffle(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function getQuestionMetaLabel(q) {
+      return `${dimensionMeta[q.dim].name} / ${dimensionMeta[q.dim].model}`;
+    }
+
+    function persistProgress() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({
+        answers: app.answers,
+        shuffledQuestions: app.shuffledQuestions.map((q) => q.id),
+        currentQuestionIndex: app.currentQuestionIndex
+      }));
+    }
+
+    function clearProgress() {
+      localStorage.removeItem(STORAGE_KEY);
+      updateResumeState();
+    }
+
+    function updateResumeState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        resumeBtn.style.display = "none";
+        resumeHint.textContent = "";
+        return;
+      }
+      try {
+        const saved = JSON.parse(raw);
+        const done = Object.keys(saved.answers || {}).length;
+        resumeBtn.style.display = "inline-flex";
+        resumeHint.textContent = done
+          ? `检测到上次进度：已回答 ${done} / ${questions.length} 题。`
+          : "检测到未完成的答题进度。";
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+        resumeBtn.style.display = "none";
+        resumeHint.textContent = "";
+      }
+    }
+
+    function restoreProgress() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return false;
+      try {
+        const saved = JSON.parse(raw);
+        const questionById = Object.fromEntries(questions.map((q) => [q.id, q]));
+        const restored = (saved.shuffledQuestions || [])
+          .map((id) => questionById[id])
+          .filter(Boolean);
+        if (restored.length !== questions.length) return false;
+        app.shuffledQuestions = restored;
+        app.answers = saved.answers || {};
+        app.currentQuestionIndex = Math.max(0, Math.min(saved.currentQuestionIndex || 0, restored.length - 1));
+        renderQuestions();
+        showScreen("test");
+        return true;
+      } catch {
+        localStorage.removeItem(STORAGE_KEY);
+        return false;
+      }
+    }
+
+    function renderQuestions() {
+      const q = app.shuffledQuestions[app.currentQuestionIndex];
+      if (!q) return;
+
+      questionList.innerHTML = "";
+      const card = document.createElement("article");
+      card.className = "question";
+      card.innerHTML = `
+        <div class="question-meta">
+          <div class="badge">第 ${app.currentQuestionIndex + 1} 题</div>
+          <div>${getQuestionMetaLabel(q)}</div>
+        </div>
+        <div class="question-title">${q.text}</div>
+        <div class="options">
+          ${q.options.map((opt, i) => {
+            const code = ["A", "B", "C"][i] || String(i + 1);
+            const checked = app.answers[q.id] === opt.value ? "checked" : "";
+            return `
+              <label class="option">
+                <input type="radio" name="${q.id}" value="${opt.value}" ${checked} />
+                <div class="option-code">${code}</div>
+                <div>${opt.label}</div>
+              </label>
+            `;
+          }).join("")}
+        </div>
+      `;
+      questionList.appendChild(card);
+
+      questionList.querySelectorAll('input[type="radio"]').forEach((input) => {
+        input.addEventListener("change", (event) => {
+          const { name, value } = event.target;
+          app.answers[name] = Number(value);
+          persistProgress();
+          updateProgress();
+          if (app.currentQuestionIndex < app.shuffledQuestions.length - 1) {
+            setTimeout(() => {
+              app.currentQuestionIndex += 1;
+              renderQuestions();
+            }, 120);
+          }
+        });
+      });
+
+      updateProgress();
+    }
+
+    function updateProgress() {
+      const total = app.shuffledQuestions.length;
+      const done = app.shuffledQuestions.filter((q) => app.answers[q.id] !== undefined).length;
+      const percent = total ? (done / total) * 100 : 0;
+      progressBar.style.width = `${percent}%`;
+      progressText.textContent = `${done} / ${total}`;
+      questionPosition.textContent = `第 ${app.currentQuestionIndex + 1} / ${total} 题`;
+      const complete = total > 0 && done === total;
+      submitBtn.disabled = !complete;
+      prevQuestionBtn.disabled = app.currentQuestionIndex === 0;
+      nextQuestionBtn.disabled = app.currentQuestionIndex === total - 1;
+      testHint.textContent = complete
+        ? "图鉴扫描完成，可以查看你的 PMTI 主类型了。"
+        : "单题翻页模式已开启，选完会自动前进，你也可以手动返回修改。";
+    }
+
+    function sumToLevel(score) {
+      if (score <= 3) return "L";
+      if (score === 4) return "M";
+      return "H";
+    }
+
+    function levelNum(level) {
+      return { L: 1, M: 2, H: 3 }[level];
+    }
+
+    function parsePattern(pattern) {
+      return pattern.replace(/-/g, "").split("");
+    }
+
+    function computeResult() {
+      const rawScores = {};
+      const levels = {};
+      Object.keys(dimensionMeta).forEach((dim) => {
+        rawScores[dim] = 0;
+      });
+
+      questions.forEach((q) => {
+        rawScores[q.dim] += Number(app.answers[q.id] || 0);
+      });
+
+      Object.entries(rawScores).forEach(([dim, score]) => {
+        levels[dim] = sumToLevel(score);
+      });
+
+      const userVector = dimensionOrder.map((dim) => levelNum(levels[dim]));
+      const ranked = NORMAL_TYPES.map((type) => {
+        const vector = parsePattern(type.pattern).map(levelNum);
+        const tuning = TYPE_SYSTEM_META[type.code];
+        let distance = 0;
+        let weightedDistance = 0;
+        let exact = 0;
+        for (let i = 0; i < vector.length; i++) {
+          const diff = Math.abs(userVector[i] - vector[i]);
+          const dim = dimensionOrder[i];
+          const weight = tuning.coreDims.includes(dim) ? 1.4 : 1;
+          distance += diff;
+          weightedDistance += diff * weight;
+          if (diff === 0) exact += 1;
+        }
+        const similarity = Math.max(0, Math.round((1 - weightedDistance / 36) * 100));
+        const confidence = Math.max(35, Math.round(((exact / 15) * 55) + ((similarity / 100) * 45)));
+        return { ...type, ...TYPE_LIBRARY[type.code], ...tuning, distance, weightedDistance, exact, similarity, confidence };
+      }).sort((a, b) => {
+        if (a.weightedDistance !== b.weightedDistance) return a.weightedDistance - b.weightedDistance;
+        if (b.exact !== a.exact) return b.exact - a.exact;
+        return b.similarity - a.similarity;
+      });
+
+      const patternBlend = ranked[1]
+        ? `你和 ${ranked[0].cn} 最接近，其次也有一点 ${ranked[1].cn} 的影子。`
+        : `你和 ${ranked[0].cn} 的整体模式最接近。`;
+
+      return {
+        rawScores,
+        levels,
+        ranked,
+        best: ranked[0],
+        patternBlend
+      };
+    }
+
+    function renderPosterStats(result) {
+      const stats = [
+        {
+          label: "成长力",
+          value: Math.round(((result.rawScores.S3 + result.rawScores.A3 + result.rawScores.Ac3) / 18) * 100)
+        },
+        {
+          label: "亲密度",
+          value: Math.round(((result.rawScores.E1 + result.rawScores.E2 + (8 - result.rawScores.E3)) / 18) * 100)
+        },
+        {
+          label: "机动力",
+          value: Math.round(((result.rawScores.Ac1 + result.rawScores.Ac2 + result.rawScores.So1) / 18) * 100)
+        },
+        {
+          label: "神秘感",
+          value: Math.round((((8 - result.rawScores.So3) + result.rawScores.So2 + result.rawScores.S2) / 18) * 100)
+        }
+      ];
+
+      document.getElementById("posterStats").innerHTML = stats.map((stat) => `
+        <div class="stat-row">
+          <strong>${stat.label}</strong>
+          <div class="stat-bar"><span style="width:${stat.value}%;"></span></div>
+          <div>${stat.value}</div>
+        </div>
+      `).join("");
+    }
+
+    function getLegendaryTendency(result) {
+      const solitude = result.rawScores.E3 + result.rawScores.So2;
+      const destiny = result.rawScores.S3 + result.rawScores.A3 + result.rawScores.S2;
+      const empathy = result.rawScores.E1 + result.rawScores.E2 + result.rawScores.A1;
+
+      if (destiny >= 14 && solitude >= 10) {
+        return "你更像传说看守者型。不是时时刻刻都在场，但一旦出现就自带“剧情要推进了”的气压。";
+      }
+      if (empathy >= 14 && result.rawScores.Ac3 >= 4) {
+        return "你更像幻兽亲和型。力量不一定张扬，但很有治愈、陪伴和被稀有羁绊选中的感觉。";
+      }
+      if (result.rawScores.Ac1 + result.rawScores.Ac2 + result.rawScores.S3 >= 14) {
+        return "你更像准神培养型。成长曲线后劲足，前期可能不显山露水，后期会越来越像大器晚成。";
+      }
+      return "你更像普通图鉴王者型。没有神兽剧本压身，但你的魅力恰好在于够稳、够真，也够耐玩。";
+    }
+
+    function getStarterTendency(result) {
+      const fire = result.rawScores.S3 + result.rawScores.Ac1 + result.rawScores.So1;
+      const water = result.rawScores.E1 + result.rawScores.So3 + result.rawScores.A1;
+      const grass = result.rawScores.E2 + result.rawScores.A3 + result.rawScores.Ac3;
+
+      if (fire >= water && fire >= grass) {
+        return "火主倾向更强。你更像靠热量、冲劲和“我来试试看”启动故事的人。";
+      }
+      if (water >= fire && water >= grass) {
+        return "水主倾向更强。你更像会看局、会顺流调整、在复杂环境里保持弹性的人。";
+      }
+      return "草主倾向更强。你更像耐心养成、关系培育和长期推进型选手。";
+    }
+
+    function getFactionTendency(result) {
+      if (result.rawScores.A2 <= 3 && result.rawScores.A1 <= 3 && result.rawScores.So3 >= 5) {
+        return "反派干部型。你很会藏信息，也不太迷信规则，更容易从灰区和缝隙里打出自己的路线。";
+      }
+      if (result.rawScores.A2 >= 5 && result.rawScores.Ac3 >= 5 && result.rawScores.S3 >= 5) {
+        return "道馆馆主型。你很适合守一个场子、练一套体系，让别人一进门就知道这里是谁的主场。";
+      }
+      if (result.rawScores.S2 >= 5 && result.rawScores.A3 >= 5 && result.rawScores.E3 >= 5) {
+        return "研究员型。你更像一边观察世界一边整理自己的地图，对理解和归纳有持续兴趣。";
+      }
+      return "旅行训练家型。你比较像主线中的自由角色，会在路上不断换队、换图、换成长支线。";
+    }
+
+    function getRegionTendency(result) {
+      if (result.rawScores.S3 + result.rawScores.Ac1 + result.rawScores.Ac3 >= 14) {
+        return "丰缘 / 神奥倾向更强。你对成长曲线、探索强度和阶段性推进更有感觉。";
+      }
+      if (result.rawScores.A1 + result.rawScores.E2 + result.rawScores.So1 >= 14) {
+        return "关都 / 城都倾向更强。你更适合经典热血冒险、关系建立和队伍陪跑。";
+      }
+      return "合众 / 帕底亚倾向更强。你更吃世界设定、风格表达和自我路线。";
+    }
+
+    function getCareerTendency(result) {
+      if (result.rawScores.Ac3 + result.rawScores.A2 + result.rawScores.S3 >= 14) {
+        return "馆主 / 队长型。你适合长期守住一个领域，把它练成自己的主场。";
+      }
+      if (result.rawScores.S2 + result.rawScores.A3 + result.rawScores.So3 >= 13) {
+        return "研究员 / 图鉴学者型。你会想搞清楚系统、规律和隐藏机制。";
+      }
+      if (result.rawScores.E2 + result.rawScores.So1 + result.rawScores.A1 >= 13) {
+        return "协调训练家 / 饲育家型。你很会把关系感和风格感养出来。";
+      }
+      return "旅行训练家 / 支线达人型。你更像在地图上边走边捡剧情的人。";
+    }
+
+    function getTeamTendency(result) {
+      if (result.rawScores.S3 + result.rawScores.Ac1 + result.rawScores.So1 >= 14) {
+        return "你偏爱高输出、高节奏的主角团型队伍，最好每只上场都带存在感。";
+      }
+      if (result.rawScores.E2 + result.rawScores.A3 + result.rawScores.Ac3 >= 14) {
+        return "你偏爱慢养成、长期陪伴型队伍，更看重羁绊、耐久和成长线。";
+      }
+      return "你偏爱功能互补、属性平衡型队伍，不一定最炸，但很难翻车。";
+    }
+
+    function getResultSummary(result) {
+      const type = result.best;
+      return [
+        `我的 PMTI 结果是 ${type.en}（${type.cn}）`,
+        `${type.roast}`,
+        `代表招式：${type.move}`,
+        `适配训练家：${type.trainer}`,
+        `弱点属性：${type.weakness}`,
+        `Top 3：${result.ranked.slice(0, 3).map((item) => item.cn).join(" / ")}`,
+        `${result.patternBlend}`,
+        `神兽倾向：${getLegendaryTendency(result)}`,
+        `御三家倾向：${getStarterTendency(result)}`
+      ].join("\n");
+    }
+
+    function renderDimList(result) {
+      const dimList = document.getElementById("dimList");
+      dimList.innerHTML = dimensionOrder.map((dim) => {
+        const level = result.levels[dim];
+        return `
+          <div class="dim-item">
+            <div class="dim-item-top">
+              <div class="dim-item-name">${dimensionMeta[dim].name}</div>
+              <div class="dim-item-score">${level} / ${result.rawScores[dim]} 分</div>
+            </div>
+            <p>${DIM_EXPLANATIONS[dim][level]}</p>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function renderTop3(result) {
+      const top3List = document.getElementById("top3List");
+      top3List.innerHTML = result.ranked.slice(0, 3).map((item, index) => `
+        <div class="top3-item">
+          <div>
+            <strong>No.${index + 1} ${item.en} / ${item.cn}</strong>
+            <span>${item.tag}</span>
+          </div>
+          <div class="top3-score">${item.similarity}%</div>
+        </div>
+      `).join("");
+    }
+
+    function roundRect(ctx, x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      let offsetY = 0;
+      String(text).split("\n").forEach((paragraph) => {
+        const chars = paragraph.split("");
+        let line = "";
+        chars.forEach((char) => {
+          const test = line + char;
+          if (ctx.measureText(test).width > maxWidth && line) {
+            ctx.fillText(line, x, y + offsetY);
+            line = char;
+            offsetY += lineHeight;
+          } else {
+            line = test;
+          }
+        });
+        if (line) {
+          ctx.fillText(line, x, y + offsetY);
+          offsetY += lineHeight;
+        }
+        if (!paragraph.length) {
+          offsetY += lineHeight;
+        }
+      });
+      return offsetY;
+    }
+
+    async function saveBlob(blob, filename) {
+      if (window.showSaveFilePicker) {
+        const handle = await window.showSaveFilePicker({
+          suggestedName: filename,
+          types: [
+            {
+              description: "PNG Image",
+              accept: { "image/png": [".png"] }
+            }
+          ]
+        });
+        const writable = await handle.createWritable();
+        await writable.write(blob);
+        await writable.close();
+        return { mode: "picker", filename };
+      }
+
+      return downloadBlob(blob, filename);
+    }
+
+    function downloadBlob(blob, filename) {
+      const objectUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = objectUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(objectUrl), 1000);
+      return { mode: "download", filename };
+    }
+
+    function normalizeFilename(filename) {
+      return filename.toLowerCase().endsWith(".png") ? filename : `${filename}.png`;
+    }
+
+    async function downloadCanvas(canvas, filename) {
+      const safeFilename = normalizeFilename(filename);
+
+      if (canvas.toBlob) {
+        const blob = await new Promise((resolve, reject) => {
+          canvas.toBlob((value) => {
+            if (!value) {
+              reject(new Error("Canvas blob generation failed"));
+              return;
+            }
+            resolve(value);
+          }, "image/png");
+        });
+        return saveBlob(blob, safeFilename);
+      }
+
+      const dataUrl = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = dataUrl;
+      link.download = safeFilename;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      return { mode: "download", filename: safeFilename };
+    }
+
+    async function exportShareImage() {
+      const result = computeResult();
+      const type = result.best;
+      const canvas = document.createElement("canvas");
+      canvas.width = 1200;
+      canvas.height = 1600;
+      const ctx = canvas.getContext("2d");
+      const [glowA, glowB, top, bottom] = type.palette;
+      const top3 = result.ranked.slice(0, 3);
+
+      const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      gradient.addColorStop(0, top);
+      gradient.addColorStop(1, bottom);
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.fillStyle = glowA;
+      ctx.beginPath();
+      ctx.arc(1020, 160, 220, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = glowB;
+      ctx.beginPath();
+      ctx.arc(180, 1280, 250, 0, Math.PI * 2);
+      ctx.fill();
+
+      roundRect(ctx, 70, 70, 1060, 1460, 42);
+      ctx.fillStyle = "rgba(255,255,255,0.76)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(234,223,201,0.95)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = "#c63d2f";
+      ctx.font = "900 28px Avenir Next, Trebuchet MS, sans-serif";
+      ctx.fillText(`PMTI / ${type.code}`, 120, 138);
+
+      ctx.fillStyle = "#1f4f8a";
+      ctx.font = "900 76px Avenir Next, Trebuchet MS, sans-serif";
+      ctx.fillText(type.cn, 120, 250);
+
+      ctx.fillStyle = "#364152";
+      ctx.font = "700 38px Avenir Next, Trebuchet MS, sans-serif";
+      ctx.fillText(`${type.en}  ·  ${type.tag}`, 120, 310);
+
+      roundRect(ctx, 840, 120, 210, 210, 32);
+      ctx.fillStyle = "rgba(255,255,255,0.5)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,255,0.7)";
+      ctx.stroke();
+      ctx.fillStyle = type.art.glyphColor;
+      ctx.font = "900 110px Avenir Next, Trebuchet MS, sans-serif";
+      ctx.fillText(type.art.glyph, 885, 250);
+
+      ctx.fillStyle = "#364152";
+      ctx.font = "500 30px PingFang SC, Microsoft YaHei, sans-serif";
+      wrapText(ctx, type.intro, 120, 390, 840, 42);
+
+      roundRect(ctx, 120, 470, 420, 220, 28);
+      ctx.fillStyle = "rgba(255,255,255,0.82)";
+      ctx.fill();
+      ctx.fillStyle = "#1f4f8a";
+      ctx.font = "800 28px PingFang SC, Microsoft YaHei, sans-serif";
+      ctx.fillText("训练家关系档案", 150, 525);
+      ctx.fillStyle = "#364152";
+      ctx.font = "500 24px PingFang SC, Microsoft YaHei, sans-serif";
+      wrapText(ctx, type.bond, 150, 570, 360, 34);
+
+      roundRect(ctx, 565, 470, 445, 220, 28);
+      ctx.fillStyle = "rgba(255,255,255,0.82)";
+      ctx.fill();
+      ctx.fillStyle = "#1f4f8a";
+      ctx.font = "800 28px PingFang SC, Microsoft YaHei, sans-serif";
+      ctx.fillText("队伍定位", 595, 525);
+      ctx.fillStyle = "#364152";
+      ctx.font = "500 24px PingFang SC, Microsoft YaHei, sans-serif";
+      wrapText(ctx, `${type.role}\n${type.signature}`, 595, 570, 385, 34);
+
+      roundRect(ctx, 120, 730, 890, 290, 28);
+      ctx.fillStyle = "rgba(255,255,255,0.82)";
+      ctx.fill();
+      ctx.fillStyle = "#1f4f8a";
+      ctx.font = "800 28px PingFang SC, Microsoft YaHei, sans-serif";
+      ctx.fillText("你的宝可梦画像", 150, 785);
+      ctx.fillStyle = "#364152";
+      ctx.font = "500 24px PingFang SC, Microsoft YaHei, sans-serif";
+      wrapText(ctx, type.desc, 150, 835, 830, 36);
+
+      roundRect(ctx, 120, 1038, 890, 180, 28);
+      ctx.fillStyle = "rgba(255,255,255,0.82)";
+      ctx.fill();
+      ctx.fillStyle = "#1f4f8a";
+      ctx.font = "800 28px PingFang SC, Microsoft YaHei, sans-serif";
+      ctx.fillText("结果标签", 150, 1090);
+      ctx.fillStyle = "#364152";
+      ctx.font = "500 22px PingFang SC, Microsoft YaHei, sans-serif";
+      wrapText(ctx, `代表招式：${type.move}\n适配训练家：${type.trainer}\n弱点属性：${type.weakness}`, 150, 1134, 830, 30);
+
+      roundRect(ctx, 120, 1250, 390, 220, 28);
+      ctx.fillStyle = "rgba(255,255,255,0.82)";
+      ctx.fill();
+      ctx.fillStyle = "#1f4f8a";
+      ctx.font = "800 28px PingFang SC, Microsoft YaHei, sans-serif";
+      ctx.fillText("世界观彩蛋", 150, 1305);
+      ctx.fillStyle = "#364152";
+      ctx.font = "500 22px PingFang SC, Microsoft YaHei, sans-serif";
+      wrapText(ctx, `神兽倾向：${getLegendaryTendency(result)}`, 150, 1350, 330, 28);
+      wrapText(ctx, `地区倾向：${getRegionTendency(result)}`, 150, 1418, 330, 28);
+
+      roundRect(ctx, 545, 1250, 465, 220, 28);
+      ctx.fillStyle = "rgba(255,255,255,0.82)";
+      ctx.fill();
+      ctx.fillStyle = "#1f4f8a";
+      ctx.font = "800 28px PingFang SC, Microsoft YaHei, sans-serif";
+      ctx.fillText("Top 3 相似类型", 575, 1305);
+      top3.forEach((item, index) => {
+        const y = 1360 + index * 54;
+        ctx.fillStyle = "#20262c";
+        ctx.font = "700 24px PingFang SC, Microsoft YaHei, sans-serif";
+        ctx.fillText(`No.${index + 1} ${item.cn}`, 575, y);
+        ctx.fillStyle = "#6b7280";
+        ctx.font = "500 20px PingFang SC, Microsoft YaHei, sans-serif";
+        ctx.fillText(item.tag, 575, y + 30);
+        ctx.fillStyle = "#c63d2f";
+        ctx.font = "900 28px Avenir Next, Trebuchet MS, sans-serif";
+        ctx.fillText(`${item.similarity}%`, 930, y + 10);
+      });
+
+      ctx.fillStyle = "#6b7280";
+      ctx.font = "500 22px PingFang SC, Microsoft YaHei, sans-serif";
+      ctx.fillText("PMTI · unofficial fan-made non-commercial project", 120, 1510);
+      ctx.fillText("Not affiliated with Nintendo / GAME FREAK / Creatures / The Pokemon Company.", 120, 1542);
+
+      return downloadCanvas(canvas, `pmti-${type.code.toLowerCase()}.png`);
+    }
+
+    function renderResult() {
+      const result = computeResult();
+      const type = result.best;
+      const [glowA, glowB, top, bottom] = type.palette;
+
+      document.documentElement.style.setProperty("--posterGlowA", glowA);
+      document.documentElement.style.setProperty("--posterGlowB", glowB);
+      document.documentElement.style.setProperty("--posterTop", top);
+      document.documentElement.style.setProperty("--posterBottom", bottom);
+      document.documentElement.style.setProperty("--artCore", type.art.core);
+      document.documentElement.style.setProperty("--artRing", type.art.ring);
+      document.documentElement.style.setProperty("--artGlyph", type.art.glyphColor);
+
+      document.getElementById("resultModeKicker").textContent = "你的 PMTI 主类型";
+      document.getElementById("resultTypeName").textContent = `${type.en} (${type.cn})`;
+      document.getElementById("matchBadge").textContent = `匹配度 ${type.similarity}% · 结果信度 ${type.confidence}%`;
+      document.getElementById("resultTypeSub").textContent = `${result.patternBlend} 当前结果更适合当作“你现在的能量配置画像”，不是唯一身份判定。`;
+      document.getElementById("resultDexLabel").textContent = `PMTI / ${type.code}`;
+      document.getElementById("resultBattleRole").textContent = type.tag;
+      document.getElementById("resultPosterMon").textContent = type.cn;
+      document.getElementById("artGlyph").textContent = type.art.glyph;
+      document.getElementById("posterCaption").textContent = type.intro;
+      document.getElementById("resultDesc").textContent = type.desc;
+      document.getElementById("signatureMove").textContent = `${type.move}。${type.roast}`;
+      document.getElementById("bestTrainer").textContent = type.trainer;
+      document.getElementById("weaknessType").textContent = type.weakness;
+      document.getElementById("bondStyle").textContent = type.bond;
+      document.getElementById("teamRole").textContent = type.role;
+      document.getElementById("signatureMoment").textContent = type.signature;
+      document.getElementById("legendaryTendency").textContent = getLegendaryTendency(result);
+      document.getElementById("starterTendency").textContent = getStarterTendency(result);
+      document.getElementById("factionTendency").textContent = getFactionTendency(result);
+      document.getElementById("regionTendency").textContent = getRegionTendency(result);
+      document.getElementById("careerTendency").textContent = getCareerTendency(result);
+      document.getElementById("teamTendency").textContent = getTeamTendency(result);
+
+      renderTop3(result);
+      renderPosterStats(result);
+      renderDimList(result);
+      shareStatus.textContent = "分享图已准备好，可以直接导出 PNG。";
+      showScreen("result");
+    }
+
+    function startTest(reset = true) {
+      if (reset) {
+        app.answers = {};
+        app.shuffledQuestions = shuffle(questions);
+        app.currentQuestionIndex = 0;
+        persistProgress();
+      }
+      renderQuestions();
+      showScreen("test");
+    }
+
+    document.getElementById("startBtn").addEventListener("click", () => startTest(true));
+    resumeBtn.addEventListener("click", () => {
+      if (!restoreProgress()) {
+        startTest(true);
+      }
+    });
+    document.getElementById("backIntroBtn").addEventListener("click", () => showScreen("intro"));
+    document.getElementById("submitBtn").addEventListener("click", renderResult);
+    document.getElementById("restartBtn").addEventListener("click", () => {
+      clearProgress();
+      startTest(true);
+    });
+    document.getElementById("toTopBtn").addEventListener("click", () => {
+      updateResumeState();
+      showScreen("intro");
+    });
+    prevQuestionBtn.addEventListener("click", () => {
+      if (app.currentQuestionIndex > 0) {
+        app.currentQuestionIndex -= 1;
+        persistProgress();
+        renderQuestions();
+      }
+    });
+    nextQuestionBtn.addEventListener("click", () => {
+      if (app.currentQuestionIndex < app.shuffledQuestions.length - 1) {
+        app.currentQuestionIndex += 1;
+        persistProgress();
+        renderQuestions();
+      }
+    });
+    modifyAnswersBtn.addEventListener("click", () => {
+      const lastAnsweredIndex = app.shuffledQuestions.findIndex((q) => app.answers[q.id] === undefined);
+      app.currentQuestionIndex = lastAnsweredIndex === -1 ? 0 : lastAnsweredIndex;
+      persistProgress();
+      renderQuestions();
+      showScreen("test");
+    });
+    copySummaryBtn.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(getResultSummary(computeResult()));
+        shareStatus.textContent = "结果文案已复制，可以直接发群聊或发动态。";
+      } catch (error) {
+        shareStatus.textContent = "复制失败了，可能是浏览器不支持剪贴板权限。";
+        console.error(error);
+      }
+    });
+    shareBtn.addEventListener("click", async () => {
+      try {
+        const saved = await exportShareImage();
+        if (saved?.mode === "picker") {
+          shareStatus.textContent = `分享图已保存为 ${saved.filename}。`;
+        } else {
+          shareStatus.textContent = `分享图已触发下载：${saved?.filename || "pmti-share.png"}。如果没看到，请检查 Chrome 下载列表。`;
+        }
+      } catch (error) {
+        if (error && error.name === "AbortError") {
+          shareStatus.textContent = "你取消了保存，这次没有导出文件。";
+          return;
+        }
+        shareStatus.textContent = "导出失败了，刷新后重试一次看看。";
+        console.error(error);
+      }
+    });
+    updateResumeState();
+  </script>
+</body>
+</html>
