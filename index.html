@@ -139,10 +139,22 @@
 
     .hero-actions { margin-top: 26px; }
 
-    .top-links {
+    .hero-topbar {
       display: flex;
-      justify-content: flex-end;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
       margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .hero-topbar .eyebrow {
+      flex: 0 1 auto;
+      margin: 0;
+    }
+
+    .hero-topbar .top-link {
+      margin-left: auto;
     }
 
     .top-link {
@@ -540,10 +552,24 @@
     }
 
     .lore-grid,
+    .result-tags-grid,
+    .relationship-grid,
     .easter-grid {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 12px;
+    }
+
+    .result-tags-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .relationship-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .easter-grid,
+    .lore-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
     }
 
     .lore-card,
@@ -645,6 +671,8 @@
       .hero-grid,
       .result-top,
       .lore-grid,
+      .result-tags-grid,
+      .relationship-grid,
       .easter-grid {
         grid-template-columns: 1fr;
       }
@@ -661,10 +689,10 @@
   <div class="shell">
     <section id="intro" class="screen active">
       <div class="hero card">
-        <div class="top-links">
+        <div class="hero-topbar">
+          <div class="eyebrow">PMTI / Unofficial Fan-made Test</div>
           <a class="top-link" href="https://github.com/DingQianJian/pmti" target="_blank" rel="noreferrer">GitHub 仓库</a>
         </div>
-        <div class="eyebrow">PMTI / Unofficial Fan-made Test</div>
         <h1>如果你不是训练家，而是一只宝可梦，你会是哪一型？</h1>
         <p class="sub">
           这是一个非官方、非商用的宝可梦主题同人测试。它保留了多维度评分思路，
@@ -683,7 +711,7 @@
           <div class="mini-panel">
             <h3>测试会看到什么</h3>
             <p>
-              你会得到一个最接近你的宝可梦类型结果，以及 Top 3 相似类型、关系画像、世界观彩蛋和可导出的分享图。
+              你会得到一个最接近你的宝可梦类型结果，以及 Top 3 相似类型、关系画像、彩蛋和可导出的分享图。
               整体更偏“角色设定”和“同人体验”，适合拿来和朋友对照着玩。
             </p>
           </div>
@@ -757,8 +785,8 @@
           </div>
 
           <div class="lore-box">
-            <h3>发布感更强的结果标签</h3>
-            <div class="lore-grid">
+            <h3>图鉴标签</h3>
+            <div class="result-tags-grid">
               <div class="lore-card">
                 <h4>代表招式</h4>
                 <p id="signatureMove"></p>
@@ -776,7 +804,7 @@
 
           <div class="lore-box">
             <h3>训练家关系档案</h3>
-            <div class="lore-grid">
+            <div class="relationship-grid">
               <div class="lore-card">
                 <h4>相处手感</h4>
                 <p id="bondStyle"></p>
@@ -789,6 +817,10 @@
                 <h4>触发高光时刻</h4>
                 <p id="signatureMoment"></p>
               </div>
+              <div class="lore-card">
+                <h4>敌对训练家</h4>
+                <p id="rivalTrainer"></p>
+              </div>
             </div>
           </div>
 
@@ -798,10 +830,10 @@
           </div>
 
           <div class="easter-box">
-            <h3>世界观彩蛋</h3>
+            <h3>彩蛋</h3>
             <div class="easter-grid">
               <div class="easter-card">
-                <h4>神兽倾向</h4>
+                <h4>稀有度倾向</h4>
                 <p id="legendaryTendency"></p>
               </div>
               <div class="easter-card">
@@ -809,19 +841,19 @@
                 <p id="starterTendency"></p>
               </div>
               <div class="easter-card">
-                <h4>阵营彩蛋</h4>
+                <h4>属性轴心</h4>
                 <p id="factionTendency"></p>
               </div>
               <div class="easter-card">
-                <h4>地区倾向</h4>
+                <h4>地区分布</h4>
                 <p id="regionTendency"></p>
               </div>
               <div class="easter-card">
-                <h4>职业倾向</h4>
+                <h4>进化方式</h4>
                 <p id="careerTendency"></p>
               </div>
               <div class="easter-card">
-                <h4>队伍偏好</h4>
+                <h4>队伍生态</h4>
                 <p id="teamTendency"></p>
               </div>
             </div>
@@ -875,16 +907,16 @@
     const questions = [
       {
         id: "q1", dim: "S1",
-        text: "刚拿到初始宝可梦没多久，你在常磐森林门口看到别的训练家已经带着徽章队伍路过，你更像哪种反应？",
+        text: "刚从研究所出发没多久，你在 1 号道路遇见已经拿到两枚徽章的训练家，你更像哪种反应？",
         options: [
-          { label: "会有点被打击，开始怀疑自己是不是起步就慢了。", value: 1 },
-          { label: "会羡慕一下，但还是决定按自己的节奏探索。", value: 2 },
-          { label: "别人有别人的旅程，我先把自己的第一段路走稳。", value: 3 }
+          { label: "会有点被打击，开始怀疑自己是不是一开始就落后了。", value: 1 },
+          { label: "会羡慕一下，但还是决定继续按自己的节奏走。", value: 2 },
+          { label: "别人有别人的徽章路线，我先把自己的第一段旅程走稳。", value: 3 }
         ]
       },
       {
         id: "q2", dim: "S1",
-        text: "道馆战结束后，馆主认真夸你“很有训练家天赋”，你的第一反应通常是？",
+        text: "道馆战结束后，道馆馆主认真夸你“很有训练家天赋”，你的第一反应通常是？",
         options: [
           { label: "他是不是在安慰我，或者看走眼了。", value: 1 },
           { label: "先收下这句夸奖，但心里还会再确认一下。", value: 2 },
@@ -893,7 +925,7 @@
       },
       {
         id: "q3", dim: "S2",
-        text: "如果宝可梦中心的前台请你登记“最适合你的属性路线”，你会更像？",
+        text: "如果博士让你在图鉴资料里登记“你最擅长的属性路线”，你会更像？",
         options: [
           { label: "完全填不出来，我的路线总在变。", value: 1 },
           { label: "隐约知道方向，但还在试自己的技能池。", value: 2 },
@@ -902,7 +934,7 @@
       },
       {
         id: "q4", dim: "S2",
-        text: "如果现在让你从图鉴里挑 6 只，组一支“最像你本人”的队伍，你会？",
+        text: "如果现在让你从全国图鉴里挑 6 只，组一支“最像你本人”的队伍，你会？",
         options: [
           { label: "选到一半就开始自我怀疑，感觉哪只都不完全像。", value: 1 },
           { label: "能组出来，但可能还会反复替换几轮。", value: 2 },
@@ -911,7 +943,7 @@
       },
       {
         id: "q5", dim: "S3",
-        text: "面对“进化石、亲密进化、通信进化、等级进化”这些路线时，你的态度更像？",
+        text: "面对“等级进化、亲密进化、通信进化、进化石”这些路线时，你的态度更像？",
         options: [
           { label: "先别急着进化，保持现在舒服的状态也挺好。", value: 1 },
           { label: "想成长，但不想把自己逼得太紧。", value: 2 },
@@ -920,7 +952,7 @@
       },
       {
         id: "q6", dim: "S3",
-        text: "如果博士说“你还有很大的成长空间”，这句话对你来说更像？",
+        text: "如果博士在宝可梦中心门口对你说“你和你的队伍还有很大的成长空间”，这句话对你来说更像？",
         options: [
           { label: "听听就好，我先把眼前这条路走完。", value: 1 },
           { label: "会心动，但不至于立刻全力加练。", value: 2 },
@@ -929,7 +961,7 @@
       },
       {
         id: "q7", dim: "E1",
-        text: "你和搭档约好在宝可梦中心集合，结果他只留下一句“我先处理点事”就消失很久，你会更容易怎么想？",
+        text: "你和搭档约好在宝可梦中心会合，结果他只留下一句“我先处理点事”就很久没出现，你会更容易怎么想？",
         options: [
           { label: "他是不是想自己行动了，或者对我有意见。", value: 1 },
           { label: "脑内会想很多，但也知道不一定真有事。", value: 2 },
@@ -938,7 +970,7 @@
       },
       {
         id: "q8", dim: "E1",
-        text: "在双打、组队旅行或一起挑战联盟时，你担心搭档哪天会突然不再和你同行的频率是？",
+        text: "在双打、组队旅行或一起挑战联盟时，你担心搭档哪天会突然退出队伍的频率是？",
         options: [
           { label: "挺高，我的脑内警报器很勤快。", value: 1 },
           { label: "偶尔会响，但不至于一直响。", value: 2 },
@@ -947,7 +979,7 @@
       },
       {
         id: "q9", dim: "E2",
-        text: "一旦你认定了一只主力宝可梦或一个固定搭档组合，你通常会？",
+        text: "一旦你认定了一只王牌宝可梦，或一个固定搭档组合，你通常会？",
         options: [
           { label: "保留一点距离，不想把情绪压得太深。", value: 1 },
           { label: "会认真培养，但心里仍会留一点缓冲。", value: 2 },
@@ -956,7 +988,7 @@
       },
       {
         id: "q10", dim: "E2",
-        text: "如果你的宝可梦在动画式名场面里冲过来抱住你，明显把你当最重要的人，你会？",
+        text: "如果你的宝可梦在关键对战后冲过来抱住你，明显把你当最重要的人，你会？",
         options: [
           { label: "会感动，但也提醒自己别太上头。", value: 1 },
           { label: "会很高兴，不过还是想维持平衡。", value: 2 },
@@ -965,7 +997,7 @@
       },
       {
         id: "q11", dim: "E3",
-        text: "如果搭档说“接下来每个城镇、每条路、每次道馆战都一起行动吧”，你的感受更像？",
+        text: "如果搭档说“接下来每个城镇、每条道路、每次道馆战都一起行动吧”，你的感受更像？",
         options: [
           { label: "挺好，热闹和陪伴都会让我安心。", value: 1 },
           { label: "看人和场景，我可以调节。", value: 2 },
@@ -974,7 +1006,7 @@
       },
       {
         id: "q12", dim: "E3",
-        text: "下面哪句更像你在旅途里的相处方式？",
+        text: "下面哪句更像你在训练家旅途里的相处方式？",
         options: [
           { label: "关系越近越好，最好默契到不用多说。", value: 1 },
           { label: "亲近和空间我都要一点。", value: 2 },
@@ -983,7 +1015,7 @@
       },
       {
         id: "q13", dim: "A1",
-        text: "在路上遇到一个主动跑来和你说话的陌生训练家或路人时，你默认的判断通常是？",
+        text: "在道路上遇到一个主动跑来和你说话的陌生训练家或路人时，你默认的判断通常是？",
         options: [
           { label: "先防着点，谁知道是不是火箭队套路。", value: 1 },
           { label: "先观察对话和场景，不急着下判断。", value: 2 },
@@ -992,7 +1024,7 @@
       },
       {
         id: "q14", dim: "A1",
-        text: "路上有个小朋友把自己捡到的树果送给你，你的第一反应是？",
+        text: "在森林出口，一个小朋友把自己捡到的树果送给你，你的第一反应是？",
         options: [
           { label: "先想这会不会有什么奇怪的后续。", value: 1 },
           { label: "会先懵一下，再看对方的态度。", value: 2 },
@@ -1001,7 +1033,7 @@
       },
       {
         id: "q15", dim: "A2",
-        text: "联盟工作人员说今天必须完成登记流程，但朋友突然约你去夜探遗迹，你会？",
+        text: "联盟工作人员说今天必须完成参赛登记，但朋友突然约你去夜探遗迹，你会？",
         options: [
           { label: "先冲遗迹，流程可以以后补。", value: 1 },
           { label: "看看能不能想个折中的办法。", value: 2 },
@@ -1010,7 +1042,7 @@
       },
       {
         id: "q16", dim: "A2",
-        text: "你对“按图鉴记录、按博士建议、按联盟规则一步步来”这件事的态度更像？",
+        text: "你对“按图鉴记录、按博士建议、按联盟流程一步步来”这件事的态度更像？",
         options: [
           { label: "能跳就跳，我更相信现场发挥。", value: 1 },
           { label: "有用就用，不合适就改。", value: 2 },
@@ -1028,7 +1060,7 @@
       },
       {
         id: "q18", dim: "A3",
-        text: "如果有人在路边问你“你出来旅行，到底想成为什么样的训练家”，你会更像？",
+        text: "如果有人在道路旁问你“你出来旅行，到底想成为什么样的训练家”，你会更像？",
         options: [
           { label: "说实话，我自己也常常答不上来。", value: 1 },
           { label: "大概知道，但还说不成一句特别完整的话。", value: 2 },
@@ -1037,7 +1069,7 @@
       },
       {
         id: "q19", dim: "Ac1",
-        text: "面对一场属性明显不利、但必须打赢的道馆战，你更容易被哪种念头驱动？",
+        text: "面对一场属性明显不利、但又必须打赢的道馆战，你更容易被哪种念头驱动？",
         options: [
           { label: "稳住，别翻车就行。", value: 1 },
           { label: "既想赢，也不想输得太难看。", value: 2 },
@@ -1046,7 +1078,7 @@
       },
       {
         id: "q20", dim: "Ac1",
-        text: "走在岔路很多的道路上时，突然发现一个没见过的洞窟入口，你一般会？",
+        text: "走在岔路很多的道路上时，突然发现一个图鉴上没标出的洞窟入口，你一般会？",
         options: [
           { label: "先评估补给、等级和可能的风险。", value: 1 },
           { label: "想进去，但会先在洞口观察一会儿。", value: 2 },
@@ -1055,7 +1087,7 @@
       },
       {
         id: "q21", dim: "Ac2",
-        text: "旅行手册展开后，轮到你决定是先去道馆、先去遗迹，还是先去野外补图鉴时，你通常？",
+        text: "地图和图鉴都摆在面前，轮到你决定是先去道馆、先去遗迹，还是先去野外补图鉴时，你通常？",
         options: [
           { label: "会纠结一阵，路线图反复看好几次。", value: 1 },
           { label: "会想一下，但总体还是能决定。", value: 2 },
@@ -1064,7 +1096,7 @@
       },
       {
         id: "q22", dim: "Ac2",
-        text: "对战时四个技能都能用，属性克制、先制招和换人机会都摆在你面前，你更像？",
+        text: "正式对战时四个技能都能用，属性克制、先制招和换人机会都摆在你面前，你更像？",
         options: [
           { label: "脑内先开几轮模拟，怕一步走错。", value: 1 },
           { label: "会犹豫一下，再按直觉和经验出手。", value: 2 },
@@ -1073,7 +1105,7 @@
       },
       {
         id: "q23", dim: "Ac3",
-        text: "如果博士把“补完图鉴、帮忙调查、顺手练级”这类事交给你，你心里更像哪句？",
+        text: "如果博士把“补完图鉴、调查异状、顺手练级”这类事交给你，你心里更像哪句？",
         options: [
           { label: "我一般会拖一拖，最后突然开始认真推进。", value: 1 },
           { label: "状态来了就能推得挺快。", value: 2 },
@@ -1091,7 +1123,7 @@
       },
       {
         id: "q25", dim: "So1",
-        text: "到了新城镇的对战会场，朋友把你拉进一群陌生训练家中间，你更接近？",
+        text: "到了新城镇的对战会场，朋友把你拉进一群陌生训练家中间时，你更接近？",
         options: [
           { label: "先观察，最好有人先来和我搭话。", value: 1 },
           { label: "能聊，但不一定主动开第一句。", value: 2 },
@@ -1100,7 +1132,7 @@
       },
       {
         id: "q26", dim: "So1",
-        text: "朋友带着自己的朋友临时加入你们今天的旅途，你通常会？",
+        text: "朋友带着自己的朋友临时加入你们今天的旅途时，你通常会？",
         options: [
           { label: "会有点距离感，怕气氛不自然。", value: 1 },
           { label: "看对方状态，能玩就玩。", value: 2 },
@@ -1109,7 +1141,7 @@
       },
       {
         id: "q27", dim: "So2",
-        text: "有个新认识的训练家刚见面就说想和你交换通讯、一起打双打、一起吃树果冰淇淋，你通常？",
+        text: "有个新认识的训练家刚见面就说想和你交换通讯、一起打双打、一起逛宝可梦中心商店，你通常？",
         options: [
           { label: "会觉得挺热情，热络一点也不错。", value: 1 },
           { label: "看人和场景，不同人反应不同。", value: 2 },
@@ -1127,7 +1159,7 @@
       },
       {
         id: "q29", dim: "So3",
-        text: "队伍讨论下一步路线时，你明明有不同意见却没说出来，最常见的原因是？",
+        text: "队伍在宝可梦中心讨论下一步路线时，你明明有不同意见却没说出来，最常见的原因是？",
         options: [
           { label: "这种情况不多，我一般会直接说。", value: 1 },
           { label: "我会看当时的气氛和队伍关系。", value: 2 },
@@ -1136,7 +1168,7 @@
       },
       {
         id: "q30", dim: "So3",
-        text: "你会不会在不同对象面前切换不同的相处方式和说话状态？",
+        text: "你会不会在馆主、路人训练家、搭档和宝可梦面前切换不同的说话状态？",
         options: [
           { label: "不太会，我大多时候都比较直给。", value: 1 },
           { label: "有一点，但整体还算稳定。", value: 2 },
@@ -1152,7 +1184,7 @@
         en: "Pikachu",
         tag: "电系 / 活跃核心",
         intro: "你像队伍里那个先把场子点亮的人。",
-        desc: "皮卡丘型通常反应快、存在感强、热启动能力高。你很容易在群体里成为那个主动接线的人，不一定想当领袖，但常常自然站到前排。你对人与气氛的流动很敏感，能快速建立连接，也愿意把自己的能量往外给。只要状态在线，你会是那种让整支队伍都更有电的人。",
+        desc: "皮卡丘型通常反应快、存在感强、热启动能力高。你很容易在旅行队里成为那个先开口、先接话、先把气氛点亮的人。你不一定非要当队长，但常常会自然站到队伍前排。你对人与气氛的流动很敏感，也愿意把自己的能量分给周围的人。只要状态在线，你会是那种让整支队伍都更有精神的人。",
         bond: "你和人熟起来很快，喜欢那种一来一回有火花的互动。只要对面愿意接你的球，你会越聊越亮。",
         role: "先手热场位。开路、破冰、打出第一段情绪优势，这些事很适合你。",
         signature: "当队伍气压偏低、所有人都还没进入状态时，你往往能第一个把电接通。",
@@ -1165,7 +1197,7 @@
         en: "Eevee",
         tag: "一般系 / 高适配",
         intro: "你最强的地方，可能就是还有很多种未来。",
-        desc: "伊布型最大的特征不是单点爆发，而是可塑性。你往往能根据环境、关系和阶段调整自己的姿态，不轻易把自己锁死在唯一剧本里。你不一定总是最锋利的那个，但很会顺着成长机会迭代自己。别人看你像柔软，其实那也是一种稀有的生存强度。",
+        desc: "伊布型最大的特征不是单点爆发，而是可塑性。你往往能根据城镇、同伴和旅途阶段调整自己的姿态，不会轻易把自己锁死在单一路线里。你不一定总是队伍里最锋利的那个，但很会顺着成长机会慢慢进化自己。别人看你像柔软，其实那也是一种很稀有的韧性。",
         bond: "你不急着把关系拉到最满，但会根据对方的节奏慢慢调整出合适的距离。",
         role: "适配器型队员。你最擅长补位，让队伍在不同局面里都不至于卡死。",
         signature: "当别人还在纠结自己非得是哪一类时，你已经悄悄长出了新的分支。",
@@ -1204,7 +1236,7 @@
         en: "Gengar",
         tag: "幽灵系 / 机灵侧翼",
         intro: "你身上有一种又坏又聪明的可爱劲。",
-        desc: "耿鬼型的人通常脑子转得快，观察细，擅长用一点幽默、恶作剧或机锋给局面重新上色。你不一定总把真话摆在明面上，但并不代表你没在认真感受。很多时候，你会通过旁敲侧击、表演感和反差感表达自己。你很适合成为队伍里那个有梗、有脑子、还能在关键时刻突然补位的人。",
+        desc: "耿鬼型的人通常脑子转得快，观察细，擅长用一点幽默、恶作剧或机锋给局面重新上色。你不一定总把真话摆在明面上，但并不代表你没在认真感受。很多时候，你会通过旁敲侧击、反差感和一点戏剧性来表达自己。你很适合成为队伍里那个会活跃气氛、也会在关键时刻补上空位的人。",
         bond: "你不太习惯直白示弱，但会用逗人、接梗和突然出现的贴心动作表达在意。",
         role: "奇袭侧翼。补位、破局、换视角，都是你的擅长位置。",
         signature: "局面太正经的时候，你往往会成为那个用一个坏笑把僵局撬开的家伙。",
@@ -1243,7 +1275,7 @@
         en: "Charizard",
         tag: "火 / 飞行系 / 进攻核心",
         intro: "你的火焰感，往往先于你本人到场。",
-        desc: "喷火龙型通常有明显的存在感、自尊和向上冲的劲头。你不一定时时刻刻都在高燃，但心里通常有一个不太甘于平庸的引擎。你愿意争取、证明、升级，也比较吃“我要打出像样结果”的那套驱动。状态好的时候，你会带着一股非常显眼的主角气。",
+        desc: "喷火龙型通常有明显的存在感、自尊和向上冲的劲头。你不一定时时刻刻都在高燃，但心里通常有一个不太甘于平庸的火种。你愿意争取、证明、升级，也很吃“我要堂堂正正赢下来”的那套驱动。状态好的时候，你会带着很强的对战主角感。",
         bond: "你希望关系里有并肩感、认可感和一点燃起来的共鸣，不喜欢长期被低估。",
         role: "强攻核心。承担火力、承担期待，也承担高光时刻。",
         signature: "当赛场、竞争、挑战或舞台感出现时，你的能量常常会被瞬间点燃。",
@@ -1282,7 +1314,7 @@
         en: "Mew",
         tag: "超能力系 / 自由奇想",
         intro: "你像那种很难被单一路线定义的人。",
-        desc: "梦幻型的人往往轻盈、灵动、好奇心强，也不太甘心被固定模板收编。你可能喜欢探索各种可能性，对新鲜感、创意和非标准路径有天然兴趣。你不是那种特别愿意被严密流程驯化的人，很多时候，你的生命力就来自那种跳脱和自由。",
+        desc: "梦幻型的人往往轻盈、灵动、好奇心强，也不太甘心被固定模板收编。你可能喜欢探索各种可能性，对新鲜感、创意和不走寻常路的旅途有天然兴趣。你不是那种特别愿意被严密流程驯化的人，很多时候，你的生命力就来自那种跳脱和自由。",
         bond: "你喜欢保留自由流动的空间，但对真正好玩、好奇、互相点亮的人会很快靠近。",
         role: "奇想型游走位。负责把队伍带去常规路线之外的新地方。",
         signature: "一旦环境允许你即兴发挥，你会展现出让人很难预测的灵气。",
@@ -1295,7 +1327,7 @@
         en: "Dragonite",
         tag: "龙 / 飞行系 / 温厚强者",
         intro: "你看起来温和，但真正需要扛事时会非常能扛。",
-        desc: "快龙型通常兼具力量感和善意，不喜欢把锋芒无意义地甩给别人，但真正到需要承担、保护和推进的时候，你又很容易站出来。你身上常有一种稳定的大体量感，不爱小题大做，却能在关键时刻给人安全感。",
+        desc: "快龙型通常兼具力量感和善意，不喜欢把锋芒无意义地甩给别人，但真正到需要承担、保护和推进的时候，你又很容易站出来。你身上常有一种稳定的大体量感，不爱小题大做，却能在关键时刻给整个队伍很强的安全感。",
         bond: "你相处起来温厚，通常不会压人，但真正认定的人会被你稳稳接住。",
         role: "重装护航位。扛压、托底、带人飞，都很像你的工作。",
         signature: "当别人开始顶不住时，你会自然切进承担模式，像把整队都往前托了一把。",
@@ -1334,7 +1366,7 @@
         en: "Lapras",
         tag: "水 / 冰系 / 长途陪伴",
         intro: "你像一条安静但很可靠的航线。",
-        desc: "拉普拉斯型通常温柔、包容、耐心，擅长陪伴而不是抢夺镜头。你对关系的投入往往是稳态型的，不会一下子烧得很猛，但会持续、细水长流地在场。别人可能会把你视作“可以放心坐上去一起走很远的人”。",
+        desc: "拉普拉斯型通常温柔、包容、耐心，擅长陪伴而不是抢夺镜头。你对关系的投入往往是稳态型的，不会一下子烧得很猛，但会持续、细水长流地在场。别人可能会把你视作“可以安心一起渡海、一起走很远的人”。",
         bond: "你的关系风格是长期陪跑型，不一定热烈，但非常能走远。",
         role: "续航护送位。你最强的不是一下子冲多快，而是能陪人走很长的海路。",
         signature: "当别人需要一个稳定、宽阔、不会突然翻船的同行者时，你的价值会非常清晰。",
@@ -1376,22 +1408,134 @@
     ];
 
     const TYPE_SYSTEM_META = {
-      PIKACHU: { move: "十万伏特型热启动", trainer: "适合外向、愿意给回应、喜欢一起探索新地方的训练家。", weakness: "长期低反馈、冷场和持续拖延会让你很快失去精神。", roast: "你不是热闹本身，就是热闹的启动按钮。", coreDims: ["So1", "Ac1", "S1"] },
-      EEVEE: { move: "适应力进化", trainer: "适合愿意一起试错、允许你慢慢长出不同可能性的训练家。", weakness: "被过早定义、被强行定型会让你卡住。", roast: "你不是变化太多，只是成长分支特别丰富。", coreDims: ["S2", "A1", "A3"] },
-      LUCARIO: { move: "波导同步", trainer: "适合尊重边界、也尊重训练强度的成熟型训练家。", weakness: "混乱管理、低标准和失控节奏会让你烦到关机。", roast: "别人练情绪价值，你练内功心法。", coreDims: ["S3", "Ac2", "Ac3"] },
-      SNORLAX: { move: "厚脂肪式稳定场", trainer: "适合不过度催促、知道你慢热但可靠的人。", weakness: "被迫高压加速、被频繁打断休息节奏会让你原地摆烂。", roast: "你的最终奥义是以不变应万卷。", coreDims: ["E3", "A2", "Ac3"] },
-      GENGAR: { move: "影子恶作剧", trainer: "适合接得住你梗、也接得住你暗线情绪的训练家。", weakness: "过度严肃、读不懂玩笑和缺少互动会让你失去兴致。", roast: "你的人际策略叫吓别人一跳再递糖。", coreDims: ["So3", "S2", "A1"] },
-      BULBASAUR: { move: "寄生种子式慢养", trainer: "适合珍惜长期关系、愿意一起慢慢成长的人。", weakness: "短期功利、过度比较和拔苗助长会伤到你。", roast: "你连发芽都带着项目管理感。", coreDims: ["E2", "A3", "Ac3"] },
-      SQUIRTLE: { move: "高速转场的水流润滑", trainer: "适合轻松、会聊天、又不强黏的搭档型训练家。", weakness: "情绪过载和社交控制欲过强会让你迅速缩壳。", roast: "你看着像随和，其实撤退路线背得滚瓜烂熟。", coreDims: ["So1", "So2", "A1"] },
-      CHARIZARD: { move: "爆炎冲顶", trainer: "适合会认可你的野心，也敢和你对高标准的人。", weakness: "被轻视、被压着飞、被长期泼冷水会让你立刻起火。", roast: "你不是爱表现，你只是天生很容易站到舞台中央。", coreDims: ["S3", "Ac1", "S1"] },
-      GARDEVOIR: { move: "超感护场", trainer: "适合温柔、有分寸、懂得珍惜细腻情绪的人。", weakness: "情绪粗暴、忽冷忽热和关系失真会让你很受伤。", roast: "你是那种会替整支队伍先感受一遍的人。", coreDims: ["E1", "E2", "A1"] },
-      PSYDUCK: { move: "混乱临界爆发", trainer: "适合耐心、不催促、能陪你把混乱慢慢理顺的人。", weakness: "高压倒计时和连续刺激会让你脑内一团乱。", roast: "你的人生有时像云团打转，但偶尔会突然闪出神光。", coreDims: ["S1", "Ac2", "Ac3"] },
-      MEW: { move: "梦幻漂移", trainer: "适合给你自由度、愿意陪你探索偏门路线的人。", weakness: "死板流程、重复劳动和被强行定义会让你消失。", roast: "你不是不按套路，你是根本没有安装套路。", coreDims: ["S2", "A2", "Ac1"] },
-      DRAGONITE: { move: "龙系护航", trainer: "适合真诚、稳定、懂得感激你托底的人。", weakness: "长期单向承担和别人把你的可靠当默认会耗损你。", roast: "你像一只温厚却能把整队稳稳带过风浪的大型飞龙。", coreDims: ["S1", "E2", "Ac3"] },
-      JIGGLYPUFF: { move: "舞台感染力", trainer: "适合会给情绪回应、愿意一起玩和一起表达的人。", weakness: "长期冷处理和被忽略会让你气到拿麦克风当锤子。", roast: "你最大的被动技是没人能假装没看见你。", coreDims: ["So1", "E2", "So3"] },
-      MEOWTH: { move: "机会点嗅探", trainer: "适合现实、聪明、尊重边界和资源交换逻辑的人。", weakness: "空头承诺和低回报高消耗局面对你极不友好。", roast: "你不是市侩，你只是很会判断什么值得出手。", coreDims: ["S2", "A2", "So3"] },
-      LAPRAS: { move: "长航陪伴", trainer: "适合愿意慢慢来、重视长期默契和稳定投入的人。", weakness: "情绪波动过大和过度索取会让你慢慢沉下去。", roast: "别人谈陪伴像口号，你谈陪伴像航线。", coreDims: ["E1", "E2", "A3"] },
-      MIMIKYU: { move: "伪装之下的真心一击", trainer: "适合不逼问、不硬拆伪装、会慢慢建立安全感的人。", weakness: "过度窥探、粗暴解读和强行亲近会让你更躲。", roast: "你不是高冷，只是心门外面先套了三层防尘袋。", coreDims: ["E3", "So2", "So3"] }
+      PIKACHU: {
+        move: "十万伏特：用一瞬间强电流把整场气氛和战局一起点亮。",
+        trainer: "小智：越打越热、越挫越冲，最能接住你那股先把场子点亮的劲。",
+        weakness: "地面属性：一旦遇到长期冷处理和反馈断电，你的热量很容易被整片地面吃掉。",
+        rival: "真司：他太冷、太省话，容易让你怀疑自己是不是白白放电。",
+        roast: "你不是热闹本身，就是热闹的启动按钮。",
+        coreDims: ["So1", "Ac1", "S1"]
+      },
+      EEVEE: {
+        move: "帮助：不是抢着出头，而是让整支队伍都更容易打出自己的节奏。",
+        trainer: "小茂：见多识广、路线灵活，能看懂你多种成长分支的价值。",
+        weakness: "岩石属性：过早定型、被要求立刻选边站时，你会像撞在石头上那样卡住。",
+        rival: "火雁：她那种明确到只剩单一路线的压迫感，会让你很难舒服展开。",
+        roast: "你不是变化太多，只是成长分支特别丰富。",
+        coreDims: ["S2", "A1", "A3"]
+      },
+      LUCARIO: {
+        move: "波导弹：集中精神后直接打出命中的一击，干净、稳定、不拖泥带水。",
+        trainer: "可可布尔：尊重修行、讲究节奏，也懂得怎么把你的力量磨成真正的招式。",
+        weakness: "恶属性：低标准、乱节奏和阴阳怪气会持续消耗你的判断力。",
+        rival: "小银：不守秩序又爱冷着来，最容易让你进入战备状态。",
+        roast: "别人练情绪价值，你练波导和心法。",
+        coreDims: ["S3", "Ac2", "Ac3"]
+      },
+      SNORLAX: {
+        move: "睡觉：不是逃避，而是把状态补满以后再稳稳接管整场战斗。",
+        trainer: "小刚：会照顾、会观察，也知道你真正发力前需要自己的节奏。",
+        weakness: "格斗属性：高压催促、连环 push 和不让休息最容易正面打穿你。",
+        rival: "小霞：她那种又急又亮的推进方式，常常会把你从舒服区里硬拽出来。",
+        roast: "你的最终奥义是先稳住，再让全队都稳住。",
+        coreDims: ["E3", "A2", "Ac3"]
+      },
+      GENGAR: {
+        move: "暗影球：看起来轻飘飘，真到出手时却又准又狠。",
+        trainer: "鬼斯通系馆主阿桔：会欣赏你的机灵、坏笑和那点不说破的聪明。",
+        weakness: "超能力属性：过度解读、强行看透和压迫式严肃会让你瞬间没兴致。",
+        rival: "娜姿：她的气场太直太压，会逼得你把所有玩笑都收回去。",
+        roast: "你的人际策略叫吓别人一跳，再若无其事地补位。",
+        coreDims: ["So3", "S2", "A1"]
+      },
+      BULBASAUR: {
+        move: "寄生种子：先稳稳扎根，再一点点把局面养到对自己有利。",
+        trainer: "小遥：愿意耐心培养、慢慢磨合，也看得懂你长期成长的价值。",
+        weakness: "火属性：过度功利、拔苗助长和粗暴推进会让你整株发蔫。",
+        rival: "真司：他太讲效率，常常不愿意给你那种慢慢长成的时间。",
+        roast: "你连发芽都带着一种会长期变强的气息。",
+        coreDims: ["E2", "A3", "Ac3"]
+      },
+      SQUIRTLE: {
+        move: "高速旋转：一边整理局面，一边把尴尬和压力一起甩开。",
+        trainer: "小霞：节奏明快、社交轻盈，很懂你那种能热场也能缩壳的弹性。",
+        weakness: "电属性：高压社交和密集情绪刺激太强时，你会突然想撤退。",
+        rival: "君莎：规则感太重、节奏太紧的时候，你会觉得自己被盯得太死。",
+        roast: "你看着像随和，其实什么时候该缩回壳里你最清楚。",
+        coreDims: ["So1", "So2", "A1"]
+      },
+      CHARIZARD: {
+        move: "喷射火焰：不只是把火放出来，而是把自己的气势一起烧成一道直线。",
+        trainer: "丹帝：喜欢强者、也鼓励强者发光，最能接住你那种要堂堂正正赢的劲头。",
+        weakness: "水属性：持续降温、反复泼冷水和被压着飞时，你会明显失去火势。",
+        rival: "赤红：那种不说话却一直稳压全场的人，最容易激起你的胜负欲。",
+        roast: "你不是想抢镜，你只是天生很适合站到镜头中心。",
+        coreDims: ["S3", "Ac1", "S1"]
+      },
+      GARDEVOIR: {
+        move: "治愈波动：先把队伍状态稳住，再让大家有力气继续往前打。",
+        trainer: "莎莉娜：温柔、细腻、会回应情绪，很适合和你建立深层共鸣。",
+        weakness: "毒属性：关系中的恶意、反复试探和污染感最容易慢慢伤到你。",
+        rival: "猎人 J：纯粹把一切当工具的态度，会踩到你的底线。",
+        roast: "你是那种会先替整支队伍感受一遍天气的人。",
+        coreDims: ["E1", "E2", "A1"]
+      },
+      PSYDUCK: {
+        move: "念力：平时不声不响，真到临界点时会突然把整张桌子掀翻。",
+        trainer: "可达鸭持有者小霞：虽然会抓狂，但也最知道怎么陪你把混乱熬过去。",
+        weakness: "草属性：一层层缠上来的琐事和催促，会让你的脑袋越来越乱。",
+        rival: "喵喵：他那种碎嘴和持续打岔，特别容易让你过载。",
+        roast: "你平时像云团打转，关键时刻却可能突然闪出一整道神光。",
+        coreDims: ["S1", "Ac2", "Ac3"]
+      },
+      MEW: {
+        move: "瞬间移动：不是逃跑，而是一下子跳到别人想不到的新位置。",
+        trainer: "大木博士：有好奇心、愿意观察，也能给你足够自由去探索偏门路线。",
+        weakness: "岩石属性：流程过死、重复过多和想象力被压住时，你会明显失速。",
+        rival: "君莎：她那种一切按规定来的节奏，很容易让你想原地消失。",
+        roast: "你不是不按套路，你只是天生就会往别人没去过的地方飘。",
+        coreDims: ["S2", "A2", "Ac1"]
+      },
+      DRAGONITE: {
+        move: "龙之舞：一边稳住阵脚，一边把整支队伍带进更强的节奏。",
+        trainer: "渡：强大、温厚、也懂得什么时候该扛住全队的重量。",
+        weakness: "冰属性：冷淡回应、长期单向承担和情感冻结最容易慢慢消耗你。",
+        rival: "坂木：那种只看结果、不看情分的力量观，会让你非常不认同。",
+        roast: "你像一只温厚却能把整队稳稳送过风浪的大型飞龙。",
+        coreDims: ["S1", "E2", "Ac3"]
+      },
+      JIGGLYPUFF: {
+        move: "唱歌：靠情绪感染和舞台感让所有人的注意力一起转向你。",
+        trainer: "小光：懂表现、懂节奏，也懂得怎么让你的魅力被认真接住。",
+        weakness: "钢属性：太硬的气氛、太冷的回应和完全不给反馈会让你特别不舒服。",
+        rival: "真司：他那种不给表情、不给回应的样子最容易把你气炸。",
+        roast: "你的被动技能就是没人能装作没注意到你。",
+        coreDims: ["So1", "E2", "So3"]
+      },
+      MEOWTH: {
+        move: "挑衅：先试探对手，再逼出破绽，然后再决定自己怎么出手最划算。",
+        trainer: "武藏：够现实、够会活，也知道你的机灵从来不是白来的。",
+        weakness: "格斗属性：粗暴、直接、完全不讲交换逻辑的局面最容易让你吃亏。",
+        rival: "小次郎：他偶尔太心软、太飘的风格，会让你很想接管全局。",
+        roast: "你不是市侩，你只是比很多人更早算清楚值不值得。",
+        coreDims: ["S2", "A2", "So3"]
+      },
+      LAPRAS: {
+        move: "灭亡之歌：安静开场，但一旦定下节奏，整场就会被你慢慢带进自己的水域。",
+        trainer: "希罗娜：稳、宽、见识足，也懂得长期同行的价值。",
+        weakness: "电属性：过强刺激、持续催促和密集索取会让你越来越想往深海退。",
+        rival: "赤日：那种把情感抽空、只剩目标的极端做法，与你完全相反。",
+        roast: "别人谈陪伴像口号，你谈陪伴像一整条能走很远的航路。",
+        coreDims: ["E1", "E2", "A3"]
+      },
+      MIMIKYU: {
+        move: "嬉闹：看起来轻轻的，真到贴近时却会把全部真心一下子拍到你面前。",
+        trainer: "莉莉艾：温柔、慢热、不逼近，最知道怎么和你的安全感一起长出来。",
+        weakness: "妖精属性：过亮、过快、过分热情的靠近，会让你反而更想躲回布下面。",
+        rival: "火箭队喵喵：太会说、太会逗、太会拆穿，会让你很难继续把自己藏好。",
+        roast: "你不是高冷，只是把真心包得比别人仔细很多。",
+        coreDims: ["E3", "So2", "So3"]
+      }
     };
 
     const DIM_EXPLANATIONS = {
@@ -1742,15 +1886,15 @@
       const empathy = result.rawScores.E1 + result.rawScores.E2 + result.rawScores.A1;
 
       if (destiny >= 14 && solitude >= 10) {
-        return "你更像传说看守者型。不是时时刻刻都在场，但一旦出现就会让人觉得接下来一定会发生重要的事。";
+        return "偏传说看守者级。存在感不一定常驻，但一旦登场就很像图鉴里会单独开一页描述的那类稀有个体。";
       }
       if (empathy >= 14 && result.rawScores.Ac3 >= 4) {
-        return "你更像幻兽亲和型。力量不一定张扬，但很有治愈、陪伴和被稀有羁绊选中的感觉。";
+        return "偏幻兽亲和型。力量不一定张扬，却自带稀有、神秘和被特殊羁绊选中的味道。";
       }
       if (result.rawScores.Ac1 + result.rawScores.Ac2 + result.rawScores.S3 >= 14) {
-        return "你更像准神培养型。成长曲线后劲足，前期可能不显山露水，后期会越来越像大器晚成。";
+        return "偏准神成长型。前期未必最显眼，但成长曲线后劲很足，越到后期越像压不住的强种。";
       }
-      return "你更像普通图鉴王者型。没有神兽剧本压身，但你的魅力恰好在于够稳、够真，也够耐玩。";
+      return "偏常规图鉴王牌型。没有神兽滤镜，但很像那种真正会被训练家长期带在队里的稳定核心。";
     }
 
     function getStarterTendency(result) {
@@ -1759,58 +1903,59 @@
       const grass = result.rawScores.E2 + result.rawScores.A3 + result.rawScores.Ac3;
 
       if (fire >= water && fire >= grass) {
-        return "火主倾向更强。你更像靠热量、冲劲和“我来试试看”启动故事的人。";
+        return "火主倾向更强。你更像那种靠热量、气势和高存在感推进旅程的御三家路线。";
       }
       if (water >= fire && water >= grass) {
-        return "水主倾向更强。你更像会看局、会顺流调整、在复杂环境里保持弹性的人。";
+        return "水主倾向更强。你更像会看局、会调节、在复杂环境里依旧保持弹性的御三家路线。";
       }
-      return "草主倾向更强。你更像耐心养成、关系培育和长期推进型选手。";
+      return "草主倾向更强。你更像慢养成、重羁绊、越养越强的御三家路线。";
     }
 
     function getFactionTendency(result) {
-      if (result.rawScores.A2 <= 3 && result.rawScores.A1 <= 3 && result.rawScores.So3 >= 5) {
-        return "反派干部型。你很会藏信息，也不太迷信规则，更容易从缝隙和变通里打出自己的路线。";
+      const attack = result.rawScores.Ac1 + result.rawScores.S3;
+      const support = result.rawScores.E2 + result.rawScores.A1;
+      const control = result.rawScores.Ac2 + result.rawScores.So3;
+
+      if (attack >= support && attack >= control) {
+        return "攻击轴更强。你的属性构成更偏火、电、龙这类高存在感、高推进力的前排体系。";
       }
-      if (result.rawScores.A2 >= 5 && result.rawScores.Ac3 >= 5 && result.rawScores.S3 >= 5) {
-        return "道馆馆主型。你很适合守住一个领域、练出一套体系，让别人一进门就知道这里的节奏是谁定的。";
+      if (support >= attack && support >= control) {
+        return "支援轴更强。你的属性构成更偏水、草、妖精这类会养场、会接队友的后场体系。";
       }
-      if (result.rawScores.S2 >= 5 && result.rawScores.A3 >= 5 && result.rawScores.E3 >= 5) {
-        return "研究员型。你更像一边观察世界一边整理自己的旅行记录，对理解和归纳有持续兴趣。";
-      }
-      return "旅行训练家型。你比较像在长途旅行中自由成长的人，会在路上不断调整队伍、路线和目标。";
+      return "控场轴更强。你的属性构成更偏超能、幽灵、钢这类会读局、会换节奏的控场体系。";
     }
 
     function getRegionTendency(result) {
       if (result.rawScores.S3 + result.rawScores.Ac1 + result.rawScores.Ac3 >= 14) {
-        return "丰缘 / 神奥倾向更强。你对成长曲线、探索强度和阶段性推进更有感觉。";
+        return "丰缘 / 神奥分布感更强。更像会出现在洞窟、遗迹、山路和冠军之路这类高成长密度区域的宝可梦。";
       }
       if (result.rawScores.A1 + result.rawScores.E2 + result.rawScores.So1 >= 14) {
-        return "关都 / 城都倾向更强。你更适合经典热血冒险、关系建立和队伍陪跑。";
+        return "关都 / 城都分布感更强。更像会出现在初始道路、常见草丛和经典旅程线上的稳定伙伴型宝可梦。";
       }
-      return "合众 / 帕底亚倾向更强。你更吃世界设定、风格表达和自我路线。";
+      return "合众 / 帕底亚分布感更强。更像会出现在设定鲜明、生态特殊、风格非常自我的地区宝可梦。";
     }
 
     function getCareerTendency(result) {
       if (result.rawScores.Ac3 + result.rawScores.A2 + result.rawScores.S3 >= 14) {
-        return "馆主 / 队长型。你适合长期守住一个领域，把它练成自己的稳定据点。";
+        return "偏等级进化 / 后期成长型。你越练越稳，越到后期越像会完成大幅进化的类型。";
       }
       if (result.rawScores.S2 + result.rawScores.A3 + result.rawScores.So3 >= 13) {
-        return "研究员 / 图鉴学者型。你会想搞清楚规律、分类和隐藏机制。";
+        return "偏亲密进化 / 条件进化型。你的变化更依赖关系、环境和触发条件，不是单纯堆等级。";
       }
       if (result.rawScores.E2 + result.rawScores.So1 + result.rawScores.A1 >= 13) {
-        return "协调训练家 / 饲育家型。你很会把关系感和风格感养出来。";
+        return "偏团队协同进化型。很像那种要在队伍里磨合、成长、才会真正打开完全体的宝可梦。";
       }
-      return "旅行训练家 / 见闻收集型。你更像在旅途中边走边收集见闻的人。";
+      return "偏保留形态 / 稳态成长型。你不一定急着变形态，更多时候靠把当前阶段练到很成熟。";
     }
 
     function getTeamTendency(result) {
       if (result.rawScores.S3 + result.rawScores.Ac1 + result.rawScores.So1 >= 14) {
-        return "你偏爱高输出、高节奏的主角团型队伍，最好每只上场都带存在感。";
+        return "更适合担任首发或前排主力。上场就要有存在感，最好能尽快把节奏拉到自己这边。";
       }
       if (result.rawScores.E2 + result.rawScores.A3 + result.rawScores.Ac3 >= 14) {
-        return "你偏爱慢养成、长期陪伴型队伍，更看重羁绊、耐久和成长线。";
+        return "更适合担任长期培养位。属于越养越顺手、越同行越能体现价值的队伍生态。";
       }
-      return "你偏爱功能互补、属性平衡型队伍，不一定最炸，但很难翻车。";
+      return "更适合担任功能补位位。也许不是最炸的那只，但往往是队伍里最难替代的一环。";
     }
 
     function getResultSummary(result) {
@@ -1821,10 +1966,12 @@
         `代表招式：${type.move}`,
         `适配训练家：${type.trainer}`,
         `弱点属性：${type.weakness}`,
+        `敌对训练家：${type.rival}`,
         `Top 3：${result.ranked.slice(0, 3).map((item) => item.cn).join(" / ")}`,
         `${result.patternBlend}`,
-        `神兽倾向：${getLegendaryTendency(result)}`,
-        `御三家倾向：${getStarterTendency(result)}`
+        `稀有度倾向：${getLegendaryTendency(result)}`,
+        `御三家倾向：${getStarterTendency(result)}`,
+        `属性轴心：${getFactionTendency(result)}`
       ].join("\n");
     }
 
@@ -2022,7 +2169,7 @@
       ctx.font = "500 24px PingFang SC, Microsoft YaHei, sans-serif";
       wrapText(ctx, type.bond, 150, 570, 360, 34);
 
-      roundRect(ctx, 565, 470, 445, 220, 28);
+      roundRect(ctx, 565, 470, 445, 260, 28);
       ctx.fillStyle = "rgba(255,255,255,0.82)";
       ctx.fill();
       ctx.fillStyle = "#1f4f8a";
@@ -2047,7 +2194,7 @@
       ctx.fill();
       ctx.fillStyle = "#1f4f8a";
       ctx.font = "800 28px PingFang SC, Microsoft YaHei, sans-serif";
-      ctx.fillText("结果标签", 150, 1090);
+      ctx.fillText("图鉴标签", 150, 1090);
       ctx.fillStyle = "#364152";
       ctx.font = "500 22px PingFang SC, Microsoft YaHei, sans-serif";
       wrapText(ctx, `代表招式：${type.move}\n适配训练家：${type.trainer}\n弱点属性：${type.weakness}`, 150, 1134, 830, 30);
@@ -2057,13 +2204,13 @@
       ctx.fill();
       ctx.fillStyle = "#1f4f8a";
       ctx.font = "800 28px PingFang SC, Microsoft YaHei, sans-serif";
-      ctx.fillText("世界观彩蛋", 150, 1305);
+      ctx.fillText("彩蛋", 150, 1305);
       ctx.fillStyle = "#364152";
       ctx.font = "500 22px PingFang SC, Microsoft YaHei, sans-serif";
       let worldY = 1350;
-      worldY += wrapText(ctx, `神兽倾向：${getLegendaryTendency(result)}`, 150, worldY, 330, 28) + 12;
-      worldY += wrapText(ctx, `地区倾向：${getRegionTendency(result)}`, 150, worldY, 330, 28) + 12;
-      wrapText(ctx, `职业倾向：${getCareerTendency(result)}`, 150, worldY, 330, 28);
+      worldY += wrapText(ctx, `稀有度倾向：${getLegendaryTendency(result)}`, 150, worldY, 330, 28) + 12;
+      worldY += wrapText(ctx, `地区分布：${getRegionTendency(result)}`, 150, worldY, 330, 28) + 12;
+      wrapText(ctx, `进化方式：${getCareerTendency(result)}`, 150, worldY, 330, 28);
 
       roundRect(ctx, 545, 1250, 465, 360, 28);
       ctx.fillStyle = "rgba(255,255,255,0.82)";
@@ -2116,12 +2263,13 @@
       document.getElementById("artGlyph").textContent = type.art.glyph;
       document.getElementById("posterCaption").textContent = type.intro;
       document.getElementById("resultDesc").textContent = type.desc;
-      document.getElementById("signatureMove").textContent = `${type.move}。${type.roast}`;
+      document.getElementById("signatureMove").textContent = type.move;
       document.getElementById("bestTrainer").textContent = type.trainer;
       document.getElementById("weaknessType").textContent = type.weakness;
       document.getElementById("bondStyle").textContent = type.bond;
       document.getElementById("teamRole").textContent = type.role;
       document.getElementById("signatureMoment").textContent = type.signature;
+      document.getElementById("rivalTrainer").textContent = type.rival;
       document.getElementById("legendaryTendency").textContent = getLegendaryTendency(result);
       document.getElementById("starterTendency").textContent = getStarterTendency(result);
       document.getElementById("factionTendency").textContent = getFactionTendency(result);
