@@ -2076,6 +2076,32 @@
       return filename.toLowerCase().endsWith(".png") ? filename : `${filename}.png`;
     }
 
+    async function loadImageFromUrl(url) {
+      const response = await fetch(url, { mode: "cors", cache: "force-cache" });
+      if (!response.ok) {
+        throw new Error(`Image request failed: ${response.status}`);
+      }
+      const blob = await response.blob();
+      return new Promise((resolve, reject) => {
+        const objectUrl = URL.createObjectURL(blob);
+        const image = new Image();
+        image.onload = () => {
+          URL.revokeObjectURL(objectUrl);
+          resolve(image);
+        };
+        image.onerror = () => {
+          URL.revokeObjectURL(objectUrl);
+          reject(new Error("Image decode failed"));
+        };
+        image.src = objectUrl;
+      });
+    }
+
+    async function getShareQrImage(targetUrl, size) {
+      const qrServiceUrl = `https://api.qrserver.com/v1/create-qr-code/?size=${size}x${size}&margin=0&data=${encodeURIComponent(targetUrl)}`;
+      return loadImageFromUrl(qrServiceUrl);
+    }
+
     async function downloadCanvas(canvas, filename) {
       const safeFilename = normalizeFilename(filename);
 
@@ -2105,12 +2131,20 @@
     async function exportShareImage() {
       const result = computeResult();
       const type = result.best;
+      const targetUrl = "https://pmti.pikazone.cn";
       const canvas = document.createElement("canvas");
       canvas.width = 1200;
       canvas.height = 1820;
       const ctx = canvas.getContext("2d");
       const [glowA, glowB, top, bottom] = type.palette;
       const top3 = result.ranked.slice(0, 3);
+      let qrImage = null;
+
+      try {
+        qrImage = await getShareQrImage(targetUrl, 180);
+      } catch (error) {
+        console.warn("QR code generation failed, fallback to text only.", error);
+      }
 
       const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
       gradient.addColorStop(0, top);
@@ -2208,9 +2242,9 @@
       ctx.fillStyle = "#364152";
       ctx.font = "500 22px PingFang SC, Microsoft YaHei, sans-serif";
       let worldY = 1350;
-      worldY += wrapText(ctx, `稀有度倾向：${getLegendaryTendency(result)}`, 150, worldY, 330, 28) + 12;
-      worldY += wrapText(ctx, `地区分布：${getRegionTendency(result)}`, 150, worldY, 330, 28) + 12;
-      wrapText(ctx, `进化方式：${getCareerTendency(result)}`, 150, worldY, 330, 28);
+      worldY += wrapText(ctx, `稀有度倾向：${getLegendaryTendency(result)}`, 150, worldY, 320, 26) + 10;
+      worldY += wrapText(ctx, `地区分布：${getRegionTendency(result)}`, 150, worldY, 320, 26) + 10;
+      wrapText(ctx, `进化方式：${getCareerTendency(result)}`, 150, worldY, 320, 26);
 
       roundRect(ctx, 545, 1250, 465, 360, 28);
       ctx.fillStyle = "rgba(255,255,255,0.82)";
@@ -2232,10 +2266,34 @@
         top3Y += Math.max(68, tagHeight + 34);
       });
 
+      const outerCardX = 70;
+      const outerCardY = 70;
+      const outerCardWidth = 1060;
+      const outerCardHeight = 1680;
+      const qrBoxSize = 132;
+      const qrInset = 18;
+      const qrBoxX = outerCardX + outerCardWidth - (qrBoxSize + 24) - qrInset;
+      const qrBoxY = outerCardY + outerCardHeight - (qrBoxSize + 24) - qrInset;
+      roundRect(ctx, qrBoxX, qrBoxY, qrBoxSize + 24, qrBoxSize + 24, 24);
+      ctx.fillStyle = "rgba(255,255,255,0.92)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(223,209,185,0.95)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      if (qrImage) {
+        ctx.drawImage(qrImage, qrBoxX + 12, qrBoxY + 12, qrBoxSize, qrBoxSize);
+      } else {
+        ctx.fillStyle = "#eadfc9";
+        ctx.fillRect(qrBoxX + 12, qrBoxY + 12, qrBoxSize, qrBoxSize);
+        ctx.fillStyle = "#5b6472";
+        ctx.font = "700 18px PingFang SC, Microsoft YaHei, sans-serif";
+        wrapText(ctx, "扫码访问", qrBoxX + 34, qrBoxY + 62, 84, 24);
+      }
+
       ctx.fillStyle = "#6b7280";
       ctx.font = "500 18px PingFang SC, Microsoft YaHei, sans-serif";
-      wrapText(ctx, "PMTI · unofficial fan-made non-commercial project", 120, 1668, 900, 24);
-      wrapText(ctx, "Not affiliated with Nintendo / GAME FREAK / Creatures / The Pokemon Company.", 120, 1696, 900, 24);
+      wrapText(ctx, "PMTI · unofficial fan-made non-commercial project", 120, 1710, 760, 22);
+      wrapText(ctx, "Not affiliated with Nintendo / GAME FREAK / Creatures / The Pokemon Company.", 120, 1736, 760, 22);
 
       return downloadCanvas(canvas, `pmti-${type.code.toLowerCase()}.png`);
     }
